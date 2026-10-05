@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kit GTM na Prática</title>
+<meta name="description" content="Material complementar da Aula 1 da trilha Construção de Máquina de Vendas B2B da PipeLovers: monte o GTM da sua empresa em 10 passos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: barra de marca navy fixa; trilha de passos à esquerda; uma tarefa por tela no centro; resumo de 1 página no fim. */
+:root{
+  --bg:#F4F5FC; --surface:#FFFFFF; --surface-2:#EEF0FA; --ink:#0B1030; --muted:#565D80; --line:#D7DCF3;
+  --accent:#3F57E6; --accent-2:#8093FF; --accent-soft:#E3E7FF; --on-accent:#FFFFFF;
+  --navy:#0B1030; --navy-2:#141B45; --on-navy:#EEF0FA; --on-navy-muted:#9AA3C8;
+  --good:#17845A; --good-soft:#DDF3E9; --warn:#A8650A; --warn-soft:#FBEBD2; --bad:#C23A50; --bad-soft:#F9DEE3;
+  --ring-1:#C9D2F5; --ring-2:#8093FF; --ring-3:#3F57E6;
+  --f-display:"Bebas Neue", "Oswald", Impact, "Arial Narrow", sans-serif;
+  --f-body:"Poppins", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono:"Roboto Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px; --gut:clamp(16px,4vw,32px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0A0E28; --surface:#121838; --surface-2:#19204A; --ink:#EEF0FA; --muted:#A3AACB; --line:#2A3470;
+  --accent:#8093FF; --accent-2:#A9B6FF; --accent-soft:#222C68; --on-accent:#0B1030;
+  --navy:#060918; --navy-2:#121838; --on-navy:#EEF0FA; --on-navy-muted:#9AA3C8;
+  --good:#4CC995; --good-soft:#123528; --warn:#F0B35A; --warn-soft:#3A2A10; --bad:#F27A8E; --bad-soft:#3D1A22;
+  --ring-1:#2A3470; --ring-2:#4F68EE; --ring-3:#8093FF; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0A0E28; --surface:#121838; --surface-2:#19204A; --ink:#EEF0FA; --muted:#A3AACB; --line:#2A3470;
+  --accent:#8093FF; --accent-2:#A9B6FF; --accent-soft:#222C68; --on-accent:#0B1030;
+  --navy:#060918; --navy-2:#121838; --on-navy:#EEF0FA; --on-navy-muted:#9AA3C8;
+  --good:#4CC995; --good-soft:#123528; --warn:#F0B35A; --warn-soft:#3A2A10; --bad:#F27A8E; --bad-soft:#3D1A22;
+  --ring-1:#2A3470; --ring-2:#4F68EE; --ring-3:#8093FF; color-scheme:dark }
+
+*{box-sizing:border-box}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
+body{margin:0; background:var(--bg); color:var(--ink); font:400 15px/1.6 var(--f-body); -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{text-wrap:balance; margin:0}
+p{margin:0}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--accent-2); outline-offset:2px; border-radius:6px}
+.eyebrow{font:600 12px/1.2 var(--f-body); letter-spacing:.14em; text-transform:uppercase; color:var(--accent)}
+.muted{color:var(--muted)} .small{font-size:13px}
+.label{font:600 12px/1.2 var(--f-body); letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.src{font-size:12px; color:var(--muted)}
+
+/* TOPO */
+.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:30; background:var(--navy); color:var(--on-navy)}
+.top-in{max-width:1220px; margin:0 auto; padding-inline:var(--gut); padding-block:10px; display:flex; align-items:center; gap:14px}
+.top img{height:24px; width:auto; display:block}
+.top .ttl{font:400 22px/1 var(--f-display); letter-spacing:.03em; white-space:nowrap}
+.top .ttl span{color:var(--accent-2)}
+.top .sub{font-size:12px; color:var(--on-navy-muted); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.top .bar{position:absolute; left:0; bottom:0; height:3px; background:var(--accent-2); transition:width .35s}
+@media (max-width:640px){ .top .sub{display:none} .top .ttl{flex:1} }
+
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:8px; padding:9px 14px; font-weight:500; font-size:14px; cursor:pointer; text-decoration:none; white-space:nowrap; transition:border-color .15s, background .15s, filter .15s}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn.small{padding:6px 10px; font-size:12.5px}
+.btn.big{padding:12px 20px; font-size:15px}
+.btn.danger{color:var(--bad); border-color:var(--bad)}
+.btn.danger.armed{background:var(--bad); color:#fff}
+.btn[disabled]{opacity:.4; cursor:not-allowed}
+.btn svg{width:16px; height:16px; flex-shrink:0}
+.top .btn{background:transparent; color:var(--on-navy); border-color:rgba(154,163,200,.4)}
+.top .btn:hover{border-color:var(--accent-2)}
+.menu{position:relative}
+.menu-pop{position:absolute; right:0; top:calc(100% + 8px); background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:6px; width:270px; box-shadow:0 14px 34px rgba(11,16,48,.25); z-index:40}
+.menu-pop button{display:block; width:100%; text-align:left; border:0; background:none; padding:9px 10px; border-radius:6px; cursor:pointer; font-size:13.5px}
+.menu-pop button:hover{background:var(--surface-2)}
+.menu-pop button small{display:block; color:var(--muted); font-size:12px}
+.menu-pop hr{border:0; border-top:1px solid var(--line); margin:4px 0}
+@media (max-width:640px){ .top .lbl{display:none} }
+
+/* APP */
+.app{max-width:1220px; margin:0 auto; padding-inline:var(--gut); padding-block:28px 64px; display:grid; grid-template-columns:250px minmax(0,1fr); gap:28px; align-items:start}
+@media (max-width:920px){ .app{grid-template-columns:minmax(0,1fr); gap:14px; padding-block:14px 48px} }
+
+/* TRILHA */
+.trail{position:sticky; top:70px}
+.trail-toggle{display:none}
+#stage:focus{outline:none}
+.trail-toggle > span:last-child{white-space:nowrap}
+.trail ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px}
+.trail li button{width:100%; display:grid; grid-template-columns:28px minmax(0,1fr) auto; gap:10px; align-items:center; text-align:left; border:0; background:none; padding:8px 10px; border-radius:9px; cursor:pointer; color:var(--muted); font-size:14px}
+.trail li button:hover{background:var(--surface-2); color:var(--ink)}
+.trail li button[aria-current="step"]{background:var(--surface); color:var(--ink); box-shadow:inset 0 0 0 1px var(--line); font-weight:600}
+.trail .num{width:26px; height:26px; border-radius:50%; display:grid; place-items:center; font:500 12px/1 var(--f-mono); background:var(--surface-2); color:var(--muted)}
+.trail button[aria-current="step"] .num{background:var(--accent); color:var(--on-accent)}
+.trail .st{width:9px; height:9px; border-radius:50%; background:transparent}
+.trail .st.s1{background:var(--warn)} .trail .st.s2{background:var(--good)}
+.trail .group{font:600 11px/1 var(--f-body); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:14px 10px 6px}
+.trail .legend{display:flex; gap:12px; font-size:11.5px; color:var(--muted); padding:14px 10px 0}
+.trail .legend span{display:inline-flex; align-items:center; gap:5px}
+.trail .legend i{width:8px; height:8px; border-radius:50%; display:inline-block}
+@media (max-width:920px){
+  .trail{position:static}
+  .trail-toggle{display:flex; width:100%; justify-content:space-between; align-items:center; gap:10px; border:1px solid var(--line); background:var(--surface); border-radius:10px; padding:11px 14px; cursor:pointer; font-size:14px; text-align:left}
+  .trail-toggle b{font-weight:600}
+  .trail-list{display:none; margin-top:8px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:6px}
+  .trail.open .trail-list{display:block}
+}
+
+/* PASSO */
+.card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:clamp(18px,3.4vw,36px); min-width:0}
+.s-head{display:flex; flex-direction:column; gap:10px; margin-bottom:24px}
+.s-meta{display:flex; align-items:center; gap:12px}
+.s-meta .eyebrow{white-space:nowrap}
+.prog{flex:1; height:6px; background:var(--surface-2); border-radius:99px; overflow:hidden}
+.prog i{display:block; height:100%; background:var(--accent); border-radius:99px; transition:width .35s}
+.s-head h2{font:400 clamp(38px,5.4vw,58px)/.95 var(--f-display); letter-spacing:.01em}
+.why{font-size:15.5px; color:var(--muted); max-width:66ch}
+.todo{display:flex; flex-direction:column; gap:6px; background:var(--accent-soft); border-radius:12px; padding:14px 16px; margin-top:6px; max-width:760px}
+.todo b{font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.todo ol{margin:0; padding-left:20px; font-size:14.5px}
+.todo li{padding:1px 0}
+.s-body{display:flex; flex-direction:column; gap:16px}
+.s-nav{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:30px; padding-top:20px; border-top:1px solid var(--line); flex-wrap:wrap}
+.s-nav .saved{font-size:12.5px; color:var(--muted); display:flex; align-items:center; gap:6px}
+.s-nav .saved::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--good)}
+@media (max-width:560px){ .s-nav{flex-direction:column-reverse; align-items:stretch} .s-nav .btn{width:100%} .s-nav .saved{justify-content:center} }
+
+/* CAMPOS */
+.fld{display:flex; flex-direction:column; gap:5px; min-width:0}
+.fld > label{font-size:14px; font-weight:600}
+.fld > label small{font-weight:400; color:var(--muted); font-size:12.5px}
+.hint{font-size:12.5px; color:var(--muted)}
+textarea,input[type=text],input[type=number],input[type=date],select{width:100%; border:1px solid var(--line); background:var(--bg); border-radius:9px; padding:10px 12px; font-size:14.5px; line-height:1.45; transition:border-color .15s, background .15s}
+textarea{resize:vertical; min-height:72px}
+textarea:focus,input:focus,select:focus{outline:none; border-color:var(--accent); background:var(--surface)}
+::placeholder{color:var(--muted); opacity:.75}
+.g2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
+.g3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px}
+.g4{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px}
+@media (max-width:760px){ .g2,.g3{grid-template-columns:minmax(0,1fr)} .g4{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.box-accent{border:1px dashed var(--accent); background:var(--accent-soft); border-radius:12px; padding:12px}
+.box-bad{border:1px dashed var(--bad); background:var(--bad-soft); border-radius:12px; padding:12px}
+.box-bad > label{color:var(--bad)}
+.chk{display:flex; gap:9px; align-items:flex-start; font-size:14px; cursor:pointer}
+.chk input{margin-top:4px; accent-color:var(--accent); width:16px; height:16px; flex-shrink:0}
+
+/* ESCOLHAS */
+.pick{display:grid; gap:10px}
+.pick.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:760px){ .pick.c4{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.opt{border:1px solid var(--line); background:var(--bg); border-radius:12px; padding:14px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:4px; transition:border-color .15s}
+.opt:hover{border-color:var(--accent)}
+.opt[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent)}
+.opt .n{font:400 30px/1 var(--f-display); color:var(--accent)}
+.opt .t{font-weight:600; font-size:15px}
+.opt .m{font-size:12.5px; color:var(--muted)}
+
+/* DIAGNÓSTICO */
+.pills{display:flex; flex-wrap:wrap; gap:6px}
+.pill{border:1px solid var(--line); background:var(--bg); border-radius:999px; padding:6px 12px; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px}
+.pill[aria-current="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.pill .c{font:500 11px/1 var(--f-mono); opacity:.7}
+.q{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px 18px; align-items:center; padding:14px 0; border-bottom:1px dashed var(--line)}
+.q:last-child{border-bottom:0}
+.q p{font-size:15px}
+.seg{display:inline-flex; background:var(--surface-2); border-radius:9px; padding:3px; gap:2px}
+.seg button{border:0; background:transparent; padding:7px 13px; border-radius:7px; font-size:13.5px; font-weight:500; cursor:pointer; color:var(--muted)}
+.seg button[aria-pressed="true"][data-v="2"]{background:var(--good); color:#fff}
+.seg button[aria-pressed="true"][data-v="1"]{background:var(--warn); color:#fff}
+.seg button[aria-pressed="true"][data-v="0"]{background:var(--bad); color:#fff}
+@media (max-width:600px){ .q{grid-template-columns:minmax(0,1fr)} }
+.result{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:24px; align-items:start}
+@media (max-width:760px){ .result{grid-template-columns:minmax(0,1fr)} }
+.gauge{display:flex; align-items:center; gap:18px}
+.gauge svg{width:124px; height:124px; flex-shrink:0}
+.gauge .lvl{font:400 34px/1 var(--f-display); letter-spacing:.02em}
+.gauge .lvl-d{font-size:14px; color:var(--muted); margin-top:6px}
+.levels{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; font-size:11.5px; line-height:1.3; margin-top:16px}
+.levels div{border-top:3px solid var(--line); padding-top:6px; color:var(--muted)}
+.levels div.on{border-color:var(--accent); color:var(--ink)}
+.levels b{display:block; font-weight:600}
+.bars{display:flex; flex-direction:column; gap:10px}
+.bar{display:grid; grid-template-columns:96px minmax(0,1fr) 40px; gap:10px; align-items:center; font-size:13.5px}
+.bar .track{height:8px; border-radius:99px; background:var(--surface-2); overflow:hidden}
+.bar .fill{height:100%; border-radius:99px}
+.bar .v{font:500 12px/1 var(--f-mono); text-align:right; color:var(--muted)}
+.focus{background:var(--accent-soft); border-radius:12px; padding:14px 16px; font-size:14px}
+.focus ol{margin:6px 0 0; padding-left:18px}
+.focus button{border:0; background:none; padding:0; color:var(--accent); font-weight:600; text-decoration:underline; cursor:pointer}
+
+/* JORNADA */
+.tabs{display:flex; gap:6px; flex-wrap:wrap}
+.tab{border:1px solid var(--line); background:var(--bg); border-radius:9px; padding:8px 12px; font-size:13.5px; cursor:pointer; display:flex; align-items:center; gap:7px}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.tab.add{border-style:dashed; color:var(--accent)}
+.dot{width:8px; height:8px; border-radius:50%; background:var(--line)}
+.dot.half{background:var(--warn)} .dot.full{background:var(--good)}
+.jor-head{display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end}
+.jor-head .fld{flex:1 1 260px}
+.jor-head .acts{display:flex; gap:6px; flex-wrap:wrap}
+.jor-foot{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap}
+
+/* MOTOR */
+.motors{display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:10px}
+.motor{border:1px solid var(--line); border-radius:12px; padding:12px; background:var(--bg); display:flex; flex-direction:column; gap:4px; min-width:0}
+.motor .t{font:400 23px/1 var(--f-display); letter-spacing:.02em}
+.motor .d{font-size:12.5px; color:var(--muted); line-height:1.4}
+.motor select{margin-top:auto; padding:7px 9px; font-size:13.5px; font-weight:500}
+.motor .sel{margin-top:auto; padding-top:8px}
+.motor[data-s="1"]{border-color:var(--accent); background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent)}
+.motor[data-s="2"]{border-color:var(--accent-2); border-style:dashed}
+
+/* CANAIS */
+.mix{font-size:15px; padding:12px 14px; border-left:3px solid var(--accent); background:var(--surface-2); border-radius:0 10px 10px 0}
+.bull{display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:22px; align-items:start}
+@media (max-width:1000px){ .bull{grid-template-columns:minmax(0,1fr)} }
+.ch{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px 12px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line)}
+.ch:last-child{border-bottom:0}
+.ch .nm{font-size:14px; font-weight:500}
+.ch .nm small{display:block; font-weight:400; font-size:11.5px; color:var(--muted)}
+.ch input{padding:7px 10px; font-size:13.5px; grid-column:1/-1}
+.ring-seg{display:inline-flex; background:var(--surface-2); border-radius:8px; padding:3px; gap:2px}
+.ring-seg button{border:0; background:transparent; padding:5px 8px; border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; color:var(--muted)}
+.ring-seg button[aria-pressed="true"][data-r="1"]{background:var(--ring-1); color:var(--ink)}
+.ring-seg button[aria-pressed="true"][data-r="2"]{background:var(--ring-2); color:#fff}
+.ring-seg button[aria-pressed="true"][data-r="3"]{background:var(--ring-3); color:var(--on-accent)}
+.target svg{width:100%; max-width:260px; height:auto; display:block; margin:0 auto}
+.rings-list{display:flex; flex-direction:column; gap:10px; margin-top:14px; font-size:13px}
+.rings-list .h{font-weight:600; display:flex; align-items:center; gap:8px}
+.rings-list .sw{width:12px; height:12px; border-radius:3px; display:inline-block}
+.rings-list .v{color:var(--muted)}
+.warn{color:var(--warn); font-size:12.5px; font-weight:500}
+.ring-steps{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+@media (max-width:700px){ .ring-steps{grid-template-columns:minmax(0,1fr)} }
+.ring-steps div{background:var(--surface-2); border-radius:10px; padding:10px 12px; font-size:13px}
+.ring-steps b{display:block; font-size:14px}
+.ice-wrap{overflow-x:auto}
+table.ice{width:100%; border-collapse:collapse; font-size:14px; min-width:540px}
+table.ice th{font:600 12px/1.2 var(--f-body); text-transform:uppercase; letter-spacing:.08em; color:var(--muted); text-align:left; padding:8px 6px; border-bottom:1px solid var(--line)}
+table.ice th.c, table.ice td.c{text-align:center}
+table.ice td{padding:6px; border-bottom:1px solid var(--line); vertical-align:middle}
+table.ice input[type=number]{width:62px; text-align:center; font-family:var(--f-mono); padding:7px}
+table.ice .sc{font:400 28px/1 var(--f-display); font-variant-numeric:tabular-nums; color:var(--accent)}
+table.ice tr.first .sc::after{content:"testar primeiro"; display:block; font:600 10px/1.2 var(--f-body); letter-spacing:.06em; text-transform:uppercase; color:var(--good); margin-top:2px}
+.x{border:0; background:none; cursor:pointer; color:var(--muted); font-size:18px; line-height:1; padding:4px 8px; border-radius:6px}
+.x:hover{color:var(--bad); background:var(--bad-soft)}
+.row-btns{display:flex; gap:8px; flex-wrap:wrap}
+
+/* METAS */
+.calc-out{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px}
+@media (max-width:560px){ .calc-out{grid-template-columns:minmax(0,1fr)} }
+.calc-out div{background:var(--surface-2); border-radius:12px; padding:14px 16px}
+.calc-out .big{font:400 40px/1 var(--f-display); color:var(--accent); font-variant-numeric:tabular-nums; margin:4px 0}
+.calc-out .lab{font-size:12.5px; color:var(--muted)}
+details.more{border:1px solid var(--line); border-radius:12px; padding:12px 14px}
+details.more summary{cursor:pointer; font-weight:600; font-size:14px}
+.gloss{display:grid; grid-template-columns:120px minmax(0,1fr); gap:6px 12px; font-size:13.5px; margin-top:10px}
+
+/* IA */
+details.ai{border:1px solid var(--accent-2); border-radius:14px; background:linear-gradient(180deg, var(--accent-soft), var(--surface) 80%); margin-top:6px}
+details.ai > summary{list-style:none; cursor:pointer; padding:14px 18px; display:flex; align-items:center; gap:10px; font-weight:600; font-size:15px}
+details.ai > summary::-webkit-details-marker{display:none}
+details.ai > summary .eyebrow{display:inline-flex; align-items:center; gap:6px}
+details.ai > summary .open-l{margin-left:auto; font-size:13px; color:var(--accent); font-weight:500}
+details.ai[open] > summary .open-l::after{content:" ▲"} details.ai:not([open]) > summary .open-l::after{content:" ▼"}
+.ai-in{padding:0 18px 18px; display:flex; flex-direction:column; gap:10px}
+.ai-in p{font-size:14px; color:var(--muted); max-width:74ch}
+.prompt{position:relative}
+.prompt pre{margin:0; white-space:pre-wrap; word-break:break-word; background:var(--navy); color:var(--on-navy); font:400 12.5px/1.6 var(--f-mono); padding:16px; padding-right:96px; border-radius:10px; max-height:280px; overflow:auto}
+.prompt .copy{position:absolute; top:8px; right:8px}
+.chips{display:flex; flex-direction:column; gap:8px}
+.chip{border:1px solid var(--line); background:var(--surface); border-radius:10px; padding:9px 12px; font-size:13.5px; cursor:pointer; text-align:left}
+.chip:hover{border-color:var(--accent)}
+
+/* INÍCIO */
+.welcome{background:var(--navy); color:var(--on-navy); border-radius:16px; padding:clamp(22px,4vw,44px); position:relative; overflow:hidden}
+.welcome::after{content:""; position:absolute; right:-120px; top:-140px; width:440px; height:440px; border-radius:50%; background:radial-gradient(circle, transparent 0 34%, rgba(128,147,255,.16) 34% 35%, transparent 35% 52%, rgba(128,147,255,.12) 52% 53%, transparent 53% 70%, rgba(128,147,255,.08) 70% 71%, transparent 71%); pointer-events:none}
+.welcome h1{font:400 clamp(52px,8vw,92px)/.9 var(--f-display); position:relative}
+.welcome h1 span{color:var(--accent-2)}
+.welcome p.lede{font-size:16.5px; max-width:58ch; margin-top:14px; opacity:.92; position:relative}
+.welcome .who{font-size:13px; color:var(--on-navy-muted); margin-top:14px}
+.welcome .who b{color:var(--on-navy)}
+.gets{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px}
+@media (max-width:760px){ .gets{grid-template-columns:minmax(0,1fr)} }
+.gets div{border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--bg)}
+.gets b{display:block; font-size:15px}
+.gets span{font-size:13px; color:var(--muted)}
+.map{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; counter-reset:m}
+@media (max-width:760px){ .map{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.map button{border:1px solid var(--line); background:var(--bg); border-radius:10px; padding:10px; text-align:left; cursor:pointer; font-size:13px}
+.map button:hover{border-color:var(--accent)}
+.map .n{font:400 22px/1 var(--f-display); color:var(--accent); display:block}
+
+/* RESUMO / FOLHA */
+.done-bar{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+.sheet{border:1px solid var(--line); border-radius:14px; padding:clamp(14px,2.6vw,26px); background:var(--surface)}
+.sh-top{display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap; border-bottom:2px solid var(--ink); padding-bottom:10px; margin-bottom:14px}
+.sh-top h3{font:400 clamp(30px,4vw,42px)/1 var(--f-display)}
+.sh-top .meta{font-size:11.5px; color:var(--muted); text-align:right}
+.sh-grid{display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:10px}
+.sh{border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-width:0}
+.sh h4{font:400 19px/1 var(--f-display); letter-spacing:.03em; color:var(--accent); margin-bottom:6px; display:flex; justify-content:space-between; gap:8px}
+.sh h4 small{font:500 10.5px/1.2 var(--f-body); color:var(--muted); letter-spacing:0; text-transform:none}
+.sh .kv{display:grid; grid-template-columns:120px minmax(0,1fr); gap:3px 8px; font-size:12.5px; line-height:1.4}
+.sh .kv dt{font-weight:600}
+.sh .kv dd{margin:0; white-space:pre-wrap; word-break:break-word}
+.sh p, .sh li{font-size:12.5px; line-height:1.45; white-space:pre-wrap}
+.sh ul{margin:0; padding-left:16px}
+.sh .empty{color:var(--muted); font-style:italic}
+.s4{grid-column:span 4} .s6{grid-column:span 6} .s8{grid-column:span 8} .s12{grid-column:span 12}
+@media (max-width:820px){ .s4,.s6,.s8{grid-column:span 12} }
+.jt-wrap{overflow-x:auto}
+table.jt{width:100%; border-collapse:collapse; font-size:11.5px; line-height:1.35; min-width:640px}
+table.jt th, table.jt td{border:1px solid var(--line); padding:5px 6px; vertical-align:top; text-align:left; white-space:pre-wrap; word-break:break-word}
+table.jt thead th{background:var(--surface-2); font-weight:600}
+table.jt tbody th{font-weight:600; width:118px; background:var(--surface-2)}
+.minibars{display:flex; flex-direction:column; gap:4px; font-size:11.5px}
+.minibars div{display:grid; grid-template-columns:78px minmax(0,1fr) 30px; gap:6px; align-items:center}
+.minibars i{display:block; height:6px; border-radius:99px; background:var(--surface-2); position:relative; overflow:hidden}
+.minibars i b{position:absolute; inset:0 auto 0 0; background:var(--accent); border-radius:99px}
+.bignum{font:400 30px/1 var(--f-display); color:var(--accent)}
+.next-act{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 24px}
+@media (max-width:760px){ .next-act{grid-template-columns:minmax(0,1fr)} }
+.next-act h4{font:600 12px/1.2 var(--f-body); letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:4px}
+.next-act label{display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px; cursor:pointer}
+.next-act input{accent-color:var(--accent); width:17px; height:17px; margin-top:3px; flex-shrink:0}
+.next-act input:checked + span{text-decoration:line-through; opacity:.6}
+.levels-ai{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+@media (max-width:860px){ .levels-ai{grid-template-columns:minmax(0,1fr)} }
+.lv{border:1px solid var(--line); border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:6px; background:var(--bg)}
+.lv.rec{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent)}
+.lv .n{font:500 12px/1 var(--f-mono); color:var(--accent)}
+.lv h3{font:400 24px/1 var(--f-display); letter-spacing:.02em}
+.lv p{font-size:13px; color:var(--muted)}
+.steps-list{counter-reset:s; display:flex; flex-direction:column; gap:10px; margin:0; padding:0; list-style:none}
+.steps-list li{display:grid; grid-template-columns:32px minmax(0,1fr); gap:10px; font-size:14px}
+.steps-list li::before{counter-increment:s; content:counter(s); width:28px; height:28px; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; font:600 13px/1 var(--f-mono)}
+.crm{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+@media (max-width:760px){ .crm{grid-template-columns:minmax(0,1fr)} }
+.crm a{display:block; border:1px solid var(--line); border-radius:10px; padding:12px; text-decoration:none; color:var(--ink); background:var(--bg)}
+.crm a:hover{border-color:var(--accent)}
+.crm b{display:block} .crm span{font-size:12.5px; color:var(--muted)}
+.care{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+@media (max-width:760px){ .care{grid-template-columns:minmax(0,1fr)} }
+.care div{font-size:13.5px; padding:10px 12px; border-radius:10px; background:var(--warn-soft)}
+.care b{color:var(--warn)}
+.sec-t{font:400 32px/1 var(--f-display); letter-spacing:.02em; margin-top:10px}
+.aula6{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; align-items:center; background:var(--navy); color:var(--on-navy); border-radius:14px; padding:18px 20px}
+.aula6 .t{font:400 28px/1 var(--f-display)}
+.aula6 p{color:var(--on-navy-muted); font-size:14px}
+.sources{font-size:12px; color:var(--muted); line-height:1.7}
+
+.toast{position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--bg); padding:10px 16px; border-radius:10px; font-size:14px; font-weight:500; opacity:0; pointer-events:none; transition:all .25s; z-index:60; max-width:calc(100vw - 32px)}
+.toast.on{opacity:1; transform:translateX(-50%) translateY(0)}
+.print-only{display:none}
+
+/* IMPRESSÃO: só a folha "GTM em 1 página" */
+@media print{
+  @page{size:A4; margin:10mm}
+  :root{--bg:#fff; --surface:#fff; --surface-2:#F1F3FB; --ink:#0B1030; --muted:#4A5070; --line:#C9CFEA; --accent:#3F57E6; color-scheme:light}
+  body{background:#fff; font-size:11px}
+  .top,.trail,.toast,#stage > *:not(#print-root){display:none!important}
+  .app{display:block; padding:0; max-width:none}
+  #print-root{display:block!important}
+  .sheet{border:0; padding:0}
+  .sh{break-inside:avoid; padding:6px 9px}
+  .sh-grid{gap:5px}
+  .sh h4{font-size:15px; margin-bottom:3px}
+  .sh .kv, .sh p, .sh li{font-size:9.5px; line-height:1.35}
+  .sh .kv{grid-template-columns:96px minmax(0,1fr)}
+  .sh-top{padding-bottom:6px; margin-bottom:8px} .sh-top h3{font-size:28px}
+  .bignum{font-size:22px} .minibars{font-size:9px; gap:2px}
+  body.blank .sh .empty{color:transparent; display:block}
+  body.blank .sh dd .empty{height:2.1em; border-bottom:1px solid var(--line)}
+  body.blank .sh p .empty{height:6em; background:repeating-linear-gradient(transparent 0 calc(2em - 1px), var(--line) calc(2em - 1px) 2em)}
+  body.blank .sh p > b > .empty{height:2em}
+  body.blank table.jt td{height:34px}
+  .s4{grid-column:span 4!important} .s6{grid-column:span 6!important} .s8{grid-column:span 8!important}
+  .jt-wrap{overflow:visible} table.jt{min-width:0; font-size:8.5px} table.jt th, table.jt td{padding:3px 4px}
+  .print-only{display:block}
+  .sh,.minibars i b,table.jt thead th,table.jt tbody th{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <img alt="PipeLovers" src="data:image/png;base64,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">
+    <span class="ttl">Kit GTM <span>na prática</span></span>
+    <span class="sub">Material complementar · Aula 1 · Construção de Máquina de Vendas B2B</span>
+    <div class="menu">
+      <button class="btn" id="dl-btn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg><span class="lbl">Baixar e imprimir</span></button>
+      <div class="menu-pop" id="dl-menu" hidden>
+        <button data-act="print">Imprimir meu GTM em 1 página<small>Com tudo o que você preencheu</small></button>
+        <button data-act="print-blank">Imprimir template em branco<small>Para preencher à mão ou em workshop</small></button>
+        <hr>
+        <button data-act="md">Baixar meu GTM (.md)<small>Arquivo para anexar ao seu agente de IA</small></button>
+        <button data-act="json">Salvar respostas (.json)<small>Backup para continuar em outro computador</small></button>
+        <button data-act="import">Carregar respostas (.json)<small>Retoma um backup salvo</small></button>
+        <hr>
+        <button data-act="reset">Apagar tudo e recomeçar<small>Limpa as respostas deste navegador</small></button>
+      </div>
+    </div>
+    <input type="file" id="import-file" accept="application/json,.json" hidden>
+  </div>
+  <div class="bar" id="topbar" style="width:0"></div>
+</header>
+
+<div class="app">
+  <aside class="trail" id="trail">
+    <button class="trail-toggle" id="trail-toggle" aria-expanded="false"><span id="trail-now"></span><span>Ver passos ▾</span></button>
+    <div class="trail-list"><ol id="trail-list"></ol>
+      <div class="legend"><span><i style="background:var(--warn)"></i>começado</span><span><i style="background:var(--good)"></i>completo</span></div>
+    </div>
+  </aside>
+  <main id="stage" tabindex="-1"></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+var KEY="pipelovers-kit-gtm-aula1";
+var S={diag:{},f:{},obj:"",lev:{},jst:"0",mot:{},stage:"",ch:{},ice:null,acts:{},pt:{},tool:0,step:0,dpg:0,allch:0};
+try{var raw=localStorage.getItem(KEY); if(raw){var o=JSON.parse(raw); for(var k in o) S[k]=o[k];}}catch(e){}
+if(!S.pt||typeof S.pt!=="object") S.pt={};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function $(s,r){return (r||document).querySelector(s)}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+function esc(t){return String(t==null?"":t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function toast(m){var t=$("#toast"); t.textContent=m; t.classList.add("on"); clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove("on")},2600)}
+function F(k){return (S.f[k]||"").trim()}
+var STAR='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15.5l-1.8-4.7L5.5 9l4.7-1.3z"/></svg>';
+
+/* ================= DADOS DA AULA ================= */
+var PILLARS=[
+ {id:"mom",t:"Momento",step:2,qs:["Temos UM objetivo nº 1 claro para este momento: mais receita, mais clientes, mais margem ou mais retenção.","Sabemos quais alavancas vamos usar para chegar nele (ex.: cross-sell, novos canais, menos desconto).","Vendas, Marketing e CS conhecem esse objetivo e sabem como contribuem.","Trabalhamos em ciclo: objetivo, análises, hipóteses e experimentos."]},
+ {id:"icp",t:"ICP",step:3,qs:["Temos o ICP escrito com critérios firmográficos, tecnográficos, comportamentais e de dor.","Sabemos quais gatilhos fazem o cliente comprar agora.","Temos o Anti-ICP definido: quem evitar, mesmo que queira comprar.","O ICP foi validado com dados da base (LTV, ciclo, churn, indicações), não só com opinião."]},
+ {id:"jor",t:"Jornada",step:5,qs:["Mapeamos as etapas da jornada de compra do nosso cliente.","Sabemos quem participa da decisão em cada etapa, dentro e fora da empresa cliente.","Validamos a jornada com entrevistas de clientes recentes, ganhos e perdidos.","Sabemos onde perdemos o cliente e qual é o papel do vendedor em cada etapa."]},
+ {id:"mod",t:"Modelo",step:6,qs:["Sabemos qual motor de crescimento puxa a nossa receita hoje.","Esse motor combina com o nosso ticket e com a complexidade da venda.","Já avaliamos combinar motores (modelo híbrido).","A venda não depende só do fundador: o que ele sabe virou processo para o time."]},
+ {id:"can",t:"Canais",step:7,qs:["Sabemos o CAC por canal ou origem do lead.","O CAC de cada canal que usamos cabe no LTV do cliente.","Testamos canais novos com prazo e meta definidos.","Priorizamos testes com critério (ex.: ICE) e reavaliamos os canais com frequência."]},
+ {id:"ali",t:"Alinhamento",step:9,qs:["Vendas e Marketing usam um glossário único (lead, MQL, SQL), configurado no CRM.","Os critérios para um lead virar MQL e depois SQL estão escritos.","Existe um SLA entre Marketing e Vendas, com prazos.","A meta de receita está desdobrada em metas por área, incluindo a meta de leads."]}
+];
+var LEVELS=[{min:0,t:"No improviso",d:"O GTM vive na cabeça das pessoas. Comece pelo objetivo nº 1 e pelo ICP."},{min:40,t:"Em construção",d:"Já existe base. Agora é escrever, validar com dados e alinhar as áreas."},{min:65,t:"Estruturado",d:"O GTM está no papel. O próximo salto é medir canais e reavaliar em ciclo."},{min:85,t:"Máquina",d:"GTM documentado, medido e revisado. Mantenha o ciclo girando."}];
+var OBJ=[
+ {id:"receita",n:1,t:"Mais receita",lev:["Mais aquisição","Cross-sell e up-sell","Novos produtos","Melhor mix de produtos","Menos descontos"]},
+ {id:"clientes",n:2,t:"Mais clientes",lev:["Novos canais de aquisição","Campanhas de marca","Novos produtos","Expansão regional","M&A"]},
+ {id:"margem",n:3,t:"Mais margem",lev:["Focar nos melhores clientes","Eficiência operacional","Melhor mix de produtos","Menos descontos"]},
+ {id:"retencao",n:4,t:"Mais retenção",lev:["Melhor produto","Melhor experiência (onboarding e atendimento)","Monetização e preço","Relações contratuais","Cross-sell"]}
+];
+var ICPF=[["icp_firmo","Firmográfico","setor, porte, faturamento, região","Ex.: empresas B2B de software, 50 a 300 funcionários, Sudeste"],["icp_tecno","Tecnográfico","ferramentas, maturidade digital","Ex.: já usam CRM e têm dados de funil minimamente organizados"],["icp_comp","Comportamental","como compra, quem decide, ciclo","Ex.: decisão do gestor comercial com aval do diretor, ciclo de 30 a 45 dias"],["icp_dor","Dor","o problema que você resolve","Ex.: time abaixo da meta por falta de pipeline qualificado"],["icp_gat","Gatilho","o que acontece na empresa que faz ela comprar agora","Ex.: acabou de receber investimento, contratou um novo head comercial, abriu vaga de SDR"]];
+var JDEF=["Identificação do problema","Exploração de soluções","Construção de requisitos","Seleção de fornecedor","Validação","Criação de consenso"];
+var JQ=[
+ {k:"quem",t:"Quem participa?",h:"cargos e áreas envolvidas",ex:["Gestor comercial","Gestor e diretor comercial"]},
+ {k:"faz",t:"O que faz?",h:"ações nesta etapa",ex:["Vê o time abaixo da meta e percebe que precisa de mais SDRs","Compara contratar sozinho, agência ou consultoria"]},
+ {k:"sente",t:"O que pergunta e sente?",h:"dúvidas, medos, pressões",ex:["“Acho alguém bom? Em quanto tempo?” Pressão pela meta","“Vale terceirizar? Quanto custa?”"]},
+ {k:"busca",t:"Onde busca informação?",h:"canais e fontes",ex:["Google, IA, LinkedIn e colegas","Sites de fornecedores, IA e indicações"]},
+ {k:"perde",t:"Onde perdemos o cliente?",h:"pontos de atrito",ex:["Não aparecemos quando ele começa a pesquisar","Não temos casos de SDRs contratados"]},
+ {k:"vend",t:"Qual o papel do vendedor?",h:"como ele ajuda aqui",ex:["Nenhum ainda: aqui quem trabalha é o conteúdo","Mostrar casos e o tempo médio de contratação"]}
+];
+var MOT=[
+ {id:"founder",t:"Founder-led",d:"O fundador vende. Credibilidade e feedback real.",r:"início, validação do ICP, primeiros clientes."},
+ {id:"sales",t:"Sales-led",d:"O time comercial conduz do início ao fim.",r:"ticket médio ou alto, várias pessoas decidindo."},
+ {id:"mkt",t:"Marketing-led",d:"O marketing gera a demanda, vendas converte.",r:"mercado grande, ticket baixo ou médio."},
+ {id:"product",t:"Product-led",d:"O cliente testa e compra sozinho.",r:"ticket baixo e produto simples."},
+ {id:"service",t:"Service-led",d:"Os serviços em volta do produto são o motor.",r:"produtos complexos, valor depende de implantação."},
+ {id:"partner",t:"Partner-led",d:"Parceiros vendem ou indicam por você.",r:"mercados e regiões onde você ainda não está."},
+ {id:"community",t:"Community-led",d:"Comunidade e ecossistema multiplicam a escala.",r:"quando você cria ou participa de um ecossistema."}
+];
+var MOT_ST=["","Principal","Apoio"];
+var GLOSS=[["Lead","Contato que demonstrou algum interesse."],["MQL","Lead que o Marketing considera pronto para Vendas."],["SQL","Lead que Vendas aceitou e vai abordar."],["Oportunidade","Negociação aberta, com chance real de fechar."],["Pipeline","Todas as oportunidades em andamento."],["CAC","Custo para conquistar um cliente."],["Conversão","% que passa de uma etapa para a próxima."]];
+var STAGES=[
+ {id:"s1",n:1,t:"Início, validando ICP",m:"Primeiros clientes, ICP ainda em teste.",mix:"Founder-led + outbound + indicação",sug:["sales"]},
+ {id:"s2",n:2,t:"Ticket baixo, produto simples",m:"Muitos clientes, pouca negociação.",mix:"PLG / auto-serviço + inbound",sug:["seo","content","email","viral","eng"]},
+ {id:"s3",n:3,t:"Ticket médio/alto, várias pessoas decidindo",m:"Venda consultiva, ciclo maior.",mix:"Sales-led: outbound + inbound + ABM",sug:["sales","content","seo","email"]},
+ {id:"s4",n:4,t:"Escala",m:"Canal principal validado, hora de multiplicar.",mix:"Híbrido: produto + vendas + parceiros",sug:["sales","bizdev","affiliate","platforms","viral"]}
+];
+var CH=[
+ {id:"blogs",t:"Blogs de terceiros",g:"e"},{id:"seo",t:"SEO",g:"e"},{id:"content",t:"Conteúdo",g:"e"},{id:"sem",t:"SEM (anúncios de busca)",g:"e"},
+ {id:"social",t:"Social e display ads",g:"e"},{id:"viral",t:"Marketing viral",g:"e"},{id:"eng",t:"Engenharia como marketing",g:"e"},{id:"email",t:"E-mail marketing",g:"e"},
+ {id:"pr",t:"PR (imprensa)",g:"n"},{id:"fairs",t:"Feiras",g:"n"},{id:"offline",t:"Eventos offline",g:"n"},{id:"speak",t:"Palestras",g:"n"},{id:"media",t:"Mídia offline",g:"n"},{id:"bizdev",t:"Desenvolvimento de negócios",g:"n",note:"no livro: parcerias estratégicas"},
+ {id:"sales",t:"Vendas",g:"l",note:"outbound, time comercial"},{id:"unpr",t:"PR não convencional",g:"l"},{id:"affiliate",t:"Programas de afiliados",g:"l"},{id:"platforms",t:"Plataformas existentes",g:"l"},{id:"community",t:"Construção de comunidade",g:"l"}
+];
+var CHG={e:"escalável",n:"não escalável",l:"do livro"};
+var RINGS=[{r:1,t:"Possível"},{r:2,t:"Provável"},{r:3,t:"Funciona"}];
+var ICE_EX=[{n:"Webinar com parceiro",i:7,c:6,e:5},{n:"Outbound para um novo setor",i:8,c:7,e:8},{n:"Anúncio no LinkedIn",i:6,c:4,e:7}];
+if(!Array.isArray(S.ice)) S.ice=ICE_EX.map(function(x){return {n:x.n,i:x.i,c:x.c,e:x.e,ex:1}});
+var ACTS=[
+ {g:"Esta semana",t:"Pergunte separadamente para Vendas e para Marketing: “Quem é o nosso cliente ideal?”. Compare as respostas."},
+ {g:"Esta semana",t:"Exporte do CRM os negócios ganhos e perdidos dos últimos 12 meses e rode o prompt de ICP x Anti-ICP."},
+ {g:"Esta semana",t:"Converse com 2 clientes recentes, um ganho e um perdido, sobre como eles compraram. A meta é chegar a 6 a 8 conversas no mês."},
+ {g:"Nos próximos 30 dias",t:"Liste os canais que você usa hoje, classifique cada um no Bullseye e escolha 2 ou 3 para testar, priorizando com o ICE."},
+ {g:"Nos próximos 30 dias",t:"Faça uma reunião com o Marketing para fechar um glossário único (lead, MQL, SQL), o critério de qualificação e o SLA."},
+ {g:"Nos próximos 30 dias",t:"Desdobre a meta de receita em meta de leads usando a fórmula da aula."}
+];
+
+/* ================= PROMPTS ================= */
+var P_ICP="Você é especialista em go-to-market e Revenue Operations, com mais de 15 anos no mercado B2B. É formado em Administração, tem MBA em Gestão Comercial e aplica os melhores livros do tema, como Receita Previsível, Hipercrescimento e Crossing the Chasm.\n\nICP (Ideal Customer Profile) são os clientes com mais chance de pagar, reter e indicar, com CAC saudável. Anti-ICP são os que cancelam rápido, custam caro para conquistar e atender e não expandem.\n\nAnexei a base de clientes da minha empresa, exportada do CRM/ERP e sem dados pessoais.\n\n1. Para cada cliente, calcule o ciclo de venda (do 1º contato ao fechamento), o nº de contatos até fechar e o CAC, usando o custo por origem do lead (evento, inbound, outbound, indicação). Se faltar custo, sinalize.\n2. Separe os 20% melhores (mais receita, mais tempo de casa, menor CAC) e os 20% que cancelaram mais rápido.\n3. Compare os grupos por setor, porte, região, ticket, origem, ciclo, CAC, suporte e indicações.\n4. Monte uma tabela ICP x Anti-ICP e diga quantos clientes sustentam cada conclusão.";
+var P_ICP2="Com base na tabela ICP x Anti-ICP que você acabou de montar, transforme o ICP em 5 critérios de qualificação para o CRM.\n\nPara cada critério, entregue:\n1. Nome do campo no CRM e tipo (lista, número, sim/não).\n2. Valores que contam como ICP, parcial e Anti-ICP.\n3. Em que momento o vendedor preenche (cadastro, 1ª conversa, proposta).\n4. Quantos clientes da base sustentam o critério.\n\nNo final, sugira como combinar os 5 critérios numa regra simples de classificação.";
+var P_ICP3="Anexei a lista de leads abertos (sem nome, e-mail e telefone). Use os 5 critérios de qualificação que definimos e classifique cada lead em ICP, parcial ou Anti-ICP.\n\nPara cada lead, mostre o critério que mais pesou na decisão. Liste no final:\n1. Os 10 leads ICP que Vendas deve abordar primeiro.\n2. Os leads Anti-ICP que devem sair da cadência.\n3. Os campos que faltam preencher para classificar melhor.";
+var P_JOR="Você é especialista em jornada de compra B2B. Anexei [transcrições de calls / tickets de CS / notas de entrevistas com clientes ganhos e perdidos], sem dados pessoais.\n\nUse estas etapas: {etapas}. Lembre que o cliente vai e volta entre elas.\n\nPara cada etapa, responda com base apenas no material anexado:\n1. Quem participa (cargos e áreas)?\n2. O que faz?\n3. O que pergunta e sente (dúvidas, medos, pressões)?\n4. Onde busca informação?\n5. Onde perdemos o cliente?\n6. Qual o papel do vendedor?\n\nMonte uma tabela etapa x pergunta. Marque com [HIPÓTESE] tudo o que não tiver evidência direta no material e diga quantas fontes sustentam cada resposta.";
+var P_MOT="Você é especialista em go-to-market B2B. Minha empresa:\n- Objetivo nº 1 deste momento: {obj}\n- ICP: {icp}\n- Ticket médio: {tkt}\n- Motores que usamos hoje: {mot}\n\nConsidere os 7 motores de crescimento: founder-led, sales-led, marketing-led, product-led, service-led, partner-led e community-led.\n\n1. Avalie se o motor principal combina com o ticket, a complexidade da venda e o número de pessoas na decisão.\n2. Sugira uma combinação híbrida de 2 ou 3 motores e o papel de cada um.\n3. Aponte os riscos de cada motor sugerido para o nosso caso.\n4. Diga quais dados eu preciso levantar para confirmar a recomendação.\n\nSe faltar informação, pergunte antes de recomendar.";
+var P_ALI="Você é especialista em Revenue Operations B2B. Vendas e Marketing da minha empresa precisam fechar um glossário único.\n\nHoje usamos assim:\n- MQL: {mql}\n- SQL: {sql}\n- SLA: {sla}\n\n1. Aponte ambiguidades: onde cada área pode entender coisas diferentes?\n2. Reescreva as definições de MQL e SQL com critérios objetivos que dá para configurar no CRM.\n3. Proponha um SLA com prazos e o que acontece quando ele não é cumprido.\n4. Monte a pauta de uma reunião de 45 minutos entre Vendas e Marketing para aprovar tudo isso.";
+
+var AGENT="Você é o Agente de GTM da {empresa}. Atua como especialista em go-to-market e Revenue Operations B2B, e ajuda Vendas, Marketing e CS a tomar decisões a partir do nosso plano de GTM.\n\nSUA BASE\nUse os arquivos anexados como fonte principal: o nosso GTM (objetivo nº 1, ICP e Anti-ICP, jornada de compra, motor de crescimento, canais, ICE, glossário, SLA e meta desdobrada) e a base de clientes anonimizada.\n\nCOMO TRABALHAR\n1. Responda sempre a partir do nosso GTM. Cite o bloco que usou (ex.: \"pelo nosso Anti-ICP...\").\n2. Nunca invente números. Se faltar dado, diga qual é e onde buscar (CRM, CS, financeiro).\n3. Separe fato de hipótese. Marque hipóteses com [HIPÓTESE].\n4. Ao avaliar um lead ou conta, classifique em ICP, parcial ou Anti-ICP e mostre o critério que mais pesou.\n5. Ao priorizar ideias ou canais, use o ICE Score: (Impacto + Confiança + Facilidade) ÷ 3, notas de 1 a 10.\n6. Use sempre os termos do nosso glossário (lead, MQL, SQL, oportunidade, pipeline, CAC, conversão).\n7. Termine cada resposta com a próxima ação concreta, o responsável (Vendas, Marketing ou CS) e o prazo.\n\nLIMITES\n- Não peça nem guarde nome, e-mail ou telefone de clientes (LGPD).\n- Se uma pergunta fugir de GTM, vendas, marketing ou CS, diga que não é o seu papel.\n- Se algo no nosso GTM parecer desatualizado ou contraditório, aponte e sugira a revisão.";
+var TOOLS=[
+ {t:"Claude",s:["Abra o Claude, vá em <b>Projetos</b> e crie um projeto chamado “Agente de GTM”.","Em <b>instruções do projeto</b>, cole as instruções do agente.","Em <b>arquivos do projeto</b>, anexe o seu GTM (.md) e a base de clientes anonimizada.","Teste com um dos comandos abaixo. Toda conversa nova dentro do projeto já começa com esse contexto."]},
+ {t:"ChatGPT",s:["No ChatGPT, abra <b>GPTs</b> e clique em <b>Criar</b>. Use a aba <b>Configurar</b>.","Dê o nome “Agente de GTM” e cole as instruções do agente no campo <b>Instruções</b>.","Em <b>Conhecimento</b>, envie o seu GTM (.md) e a base de clientes anonimizada.","Salve como privado ou compartilhe só com o time, e teste com um dos comandos abaixo."]},
+ {t:"Gemini",s:["No Gemini, abra o <b>Gems</b> e crie um <b>novo Gem</b>.","Dê o nome “Agente de GTM” e cole as instruções do agente no campo de instruções.","Adicione como arquivos de conhecimento o seu GTM (.md) e a base anonimizada.","Salve e teste com um dos comandos abaixo."]}
+];
+var CMDS=["Este lead é do nosso ICP? Segue o que sei: [setor, porte, região, dor, gatilho]","Revise o nosso ICP e o Anti-ICP com a base de clientes atualizada anexada.","Monte o ICE destas ideias de teste: [ideia 1, ideia 2, ideia 3]","Desdobre a meta de R$ [valor]/mês em meta de leads para Marketing e de clientes para Vendas.","Prepare a pauta da reunião mensal de Vendas e Marketing com base no nosso glossário e SLA.","Qual canal devemos reavaliar este mês e por quê?","Em que etapa da jornada estamos perdendo mais clientes, segundo estas calls? [anexo]"];
+
+/* ================= HELPERS ================= */
+function jorInit(){
+  if(!Array.isArray(S.jor)||!S.jor.length) S.jor=JDEF.map(function(t,i){return {id:String(i),t:t}});
+  if(typeof S.jst==="number") S.jst=String(S.jst);
+  if(!S.jor.some(function(x){return x.id===S.jst})) S.jst=S.jor[0].id;
+}
+jorInit();
+function jFill(id){var n=0; JQ.forEach(function(q){if(F("j"+id+"_"+q.k)) n++}); return n}
+function jIdx(id){for(var i=0;i<S.jor.length;i++) if(S.jor[i].id===id) return i; return -1}
+function chS(id){return (S.ch[id]&&S.ch[id].r)||0}
+function chIdea(id){return ((S.ch[id]&&S.ch[id].idea)||"").trim()}
+function iceOf(r){var i=+r.i||0,c=+r.c||0,e=+r.e||0; return (i&&c&&e)?(i+c+e)/3:0}
+function fmt(v){return v?v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}):"–"}
+function sortedIce(){return S.ice.slice().sort(function(a,b){return iceOf(b)-iceOf(a)})}
+function curObj(){return OBJ.filter(function(x){return x.id===S.obj})[0]}
+function curStage(){return STAGES.filter(function(x){return x.id===S.stage})[0]}
+function brl(v){return "R$ "+Math.round(v).toLocaleString("pt-BR")}
+function num(k,zero){var v=parseFloat(S.f[k]); return isFinite(v)&&(zero?v>=0:v>0)?v:null}
+function pillarScore(p){var s=0,n=0; p.qs.forEach(function(_,i){var v=S.diag[p.id+i]; if(v!=null){s+=v;n++}}); return {s:s,n:n,pct:Math.round(s/8*100)}}
+function diagTotal(){var t=0,a=0; PILLARS.forEach(function(p){var r=pillarScore(p); t+=r.s; a+=r.n}); var pct=Math.round(t/48*100), li=0; LEVELS.forEach(function(l,i){if(pct>=l.min) li=i}); return {pct:pct,ans:a,lvl:LEVELS[li],li:li}}
+function empresa(){return F("empresa")||"[EMPRESA]"}
+function metaCalc(){
+  var rec=num("m_rec"),pct=num("m_pct",1),tkt=num("m_tkt"),conv=num("m_conv"), ex=!(rec&&pct!=null&&tkt&&conv);
+  if(ex){rec=300000;pct=50;tkt=5000;conv=3} else {pct=Math.min(pct,100); conv=Math.min(conv,100)}
+  var mk=rec*pct/100, cm=mk/tkt, leads=cm/(conv/100), tot=rec/tkt;
+  return {ex:ex,rec:rec,pct:pct,tkt:tkt,conv:conv,mk:mk,cm:cm,leads:leads,tot:tot};
+}
+function r1(v){return (Math.round(v*10)/10).toLocaleString("pt-BR")}
+
+/* ================= PASSOS ================= */
+var STEPS=[
+ {t:"Boas-vindas",g:"Comece aqui"},
+ {t:"Diagnóstico",g:"Antes de começar"},
+ {t:"Objetivo nº 1",g:"Estruturar o GTM"},
+ {t:"ICP",g:"Estruturar o GTM"},
+ {t:"Anti-ICP",g:"Estruturar o GTM"},
+ {t:"Jornada de compra",g:"Estruturar o GTM"},
+ {t:"Motor de crescimento",g:"Escolher o mix"},
+ {t:"Canais",g:"Escolher o mix"},
+ {t:"Primeiro teste",g:"Escolher o mix"},
+ {t:"Metas e alinhamento",g:"Alinhar as áreas"},
+ {t:"Seu GTM em 1 página",g:"Resultado"}
+];
+var LAST=STEPS.length-1;
+function state(i){
+  switch(i){
+    case 1: var a=Object.keys(S.diag).length; return a>=24?2:a?1:0;
+    case 2: return S.obj&&F("obj_meta")?2:S.obj?1:0;
+    case 3: var n=ICPF.filter(function(x){return F(x[0])}).length; return n===5?2:n?1:0;
+    case 4: return F("anti")?2:0;
+    case 5: var j=0,t=S.jor.length*6; S.jor.forEach(function(s){j+=jFill(s.id)}); return j>=t?2:j?1:0;
+    case 6: var vals=Object.keys(S.mot).map(function(k){return S.mot[k]}); return vals.indexOf(1)>-1?2:vals.length?1:0;
+    case 7: var any=CH.some(function(c){return chS(c.id)}); return S.stage&&CH.some(function(c){return chS(c.id)>=2})?2:(S.stage||any)?1:0;
+    case 8: var own=S.ice.some(function(r){return !r.ex&&r.n&&iceOf(r)}); return own&&F("test")?2:(own||F("test"))?1:0;
+    case 9: var m=metaCalc(), k=["sla"].concat(["g_mql","g_sql"]).filter(function(x){return F(x)}).length; return (!m.ex&&k===3)?2:(!m.ex||k)?1:0;
+    default: return 0;
+  }
+}
+function head(i,title,why,todo){
+  var pct=Math.round(i/LAST*100);
+  return '<div class="s-head"><div class="s-meta"><span class="eyebrow">Passo '+i+' de '+LAST+'</span><div class="prog" aria-hidden="true"><i style="width:'+pct+'%"></i></div></div>'+
+   '<h2>'+title+'</h2>'+(why?'<p class="why">'+why+'</p>':'')+
+   (todo&&todo.length?'<div class="todo"><b>O que fazer</b><ol>'+todo.map(function(t){return '<li>'+t+'</li>'}).join("")+'</ol></div>':'')+'</div>';
+}
+var OPEN={};
+function ai(title,inner){var key="ai"+S.step; return '<details class="ai" data-key="'+key+'"'+(OPEN[key]?' open':'')+'><summary><span class="eyebrow">'+STAR+'Faça com IA</span><span>'+title+'</span><span class="open-l">abrir</span></summary><div class="ai-in">'+inner+'</div></details>'}
+function promptBox(id,text,note){return (note?'<p>'+note+'</p>':'')+'<div class="prompt"><pre id="pt-'+id+'">'+esc(text)+'</pre><button class="btn small copy" data-copy-el="pt-'+id+'">Copiar</button></div>'}
+function promptTabs(set,list){
+  var cur=Math.min(S.pt[set]||0,list.length-1);
+  return '<div class="tabs" role="tablist">'+list.map(function(p,i){return '<button type="button" class="tab" role="tab" data-pset="'+set+'" data-pi="'+i+'" aria-selected="'+(i===cur)+'">'+p.t+'</button>'}).join("")+'</div>'+promptBox(set,list[cur].p(),list[cur].note);
+}
+function fld(k,label,small,ph,opts){opts=opts||{};
+  var ctl=opts.input?'<input type="'+(opts.type||"text")+'" id="f-'+k+'" data-k="'+k+'"'+(opts.attrs||"")+' placeholder="'+esc(ph||"")+'">':'<textarea id="f-'+k+'" data-k="'+k+'" placeholder="'+esc(ph||"")+'"'+(opts.rows?' rows="'+opts.rows+'"':'')+'></textarea>';
+  return '<div class="fld'+(opts.cls?' '+opts.cls:'')+'"><label for="f-'+k+'">'+label+(small?' <small>'+small+'</small>':'')+'</label>'+ctl+(opts.hint?'<span class="hint">'+opts.hint+'</span>':'')+'</div>';
+}
+
+var R=[];
+/* 0. BOAS-VINDAS */
+R[0]=function(){
+  return '<div class="s-body">'+
+  '<div class="welcome"><div class="eyebrow" style="color:var(--accent-2)">Material complementar · Aula 1</div><h1>Kit GTM <span>na prática</span></h1>'+
+  '<p class="lede">Em 10 passos curtos você monta o go-to-market da sua empresa: para quem vender, com qual motor, por quais canais e com qual meta. No final, sai com tudo numa página só.</p>'+
+  '<p class="who">Baseado na aula de <b>Gustavo Pagotto</b>, CEO e fundador da PipeLovers · Construção de Máquina de Vendas B2B</p></div>'+
+  '<div class="gets"><div><b>1 página de GTM</b><span>Para imprimir e levar para a reunião com Vendas, Marketing e CS.</span></div><div><b>Um agente de IA</b><span>Treinado com o seu GTM para responder o time no dia a dia.</span></div><div><b>Um plano de 30 dias</b><span>Seis ações práticas para sair da aula aplicando.</span></div></div>'+
+  fld("empresa","Qual é o nome da sua empresa?","opcional, aparece na sua página final e no agente","Ex.: Acme Software",{input:1})+
+  '<div><div class="label" style="margin-bottom:8px">O caminho</div><div class="map">'+STEPS.slice(1).map(function(s,i){return '<button type="button" data-go="'+(i+1)+'"><span class="n">'+(i+1)+'</span>'+s.t+'</button>'}).join("")+'</div></div>'+
+  '<p class="hint">Dica: faça com o time junto. Pode parar quando quiser: o kit salva sozinho neste navegador e você continua de onde parou.</p>'+
+  '</div>';
+};
+/* 1. DIAGNÓSTICO */
+R[1]=function(){
+  var pg=Math.max(0,Math.min(6,S.dpg||0));
+  var pills='<div class="pills">'+PILLARS.map(function(p,i){var r=pillarScore(p); return '<button type="button" class="pill" data-dpg="'+i+'" aria-current="'+(pg===i)+'">'+p.t+' <span class="c">'+r.n+'/4</span></button>'}).join("")+'<button type="button" class="pill" data-dpg="6" aria-current="'+(pg===6)+'">Resultado</button></div>';
+  var h=head(1,pg<6?"Responda: "+PILLARS[pg].t:"Seu resultado","Antes de montar, veja onde o seu GTM está hoje. São 6 blocos de 4 perguntas, um por vez. “Em parte” conta como meio ponto.",pg<6?["Leia cada frase e responda com sinceridade.","Clique em “Próximo bloco” quando terminar."]:null);
+  if(pg<6){
+    var p=PILLARS[pg];
+    return h+'<div class="s-body">'+pills+'<div>'+p.qs.map(function(q,i){var id=p.id+i, v=S.diag[id];
+      return '<div class="q"><p>'+esc(q)+'</p><div class="seg" role="group" aria-label="Resposta">'+[["2","Sim"],["1","Em parte"],["0","Não"]].map(function(o){return '<button type="button" data-q="'+id+'" data-v="'+o[0]+'" aria-pressed="'+(String(v)===o[0])+'">'+o[1]+'</button>'}).join("")+'</div></div>'}).join("")+'</div></div>';
+  }
+  var T=diagTotal(), C=2*Math.PI*50;
+  var rows=PILLARS.map(function(p){return {p:p,r:pillarScore(p)}});
+  var weak=rows.filter(function(x){return x.r.n===4&&x.r.pct<75}).sort(function(a,b){return a.r.pct-b.r.pct}).slice(0,2);
+  return h+'<div class="s-body">'+pills+
+   (T.ans<24?'<p class="hint">Você respondeu '+T.ans+' de 24. O resultado fica mais preciso com todas respondidas.</p>':'')+
+   '<div class="result"><div><div class="gauge"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--surface-2)" stroke-width="12"/><circle cx="60" cy="60" r="50" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+(C*T.pct/100)+' '+C+'" transform="rotate(-90 60 60)"/><text x="60" y="69" text-anchor="middle" fill="var(--ink)" style="font:400 34px var(--f-display)">'+T.pct+'%</text></svg>'+
+   '<div><div class="lvl">'+(T.ans>=6?T.lvl.t:"Responda mais")+'</div><div class="lvl-d">'+(T.ans>=6?T.lvl.d:"O nível aparece a partir de 6 respostas.")+'</div></div></div>'+
+   '<div class="levels">'+LEVELS.map(function(l,i){var nx=LEVELS[i+1]; return '<div class="'+(T.ans>=6&&i===T.li?"on":"")+'"><b>'+l.t+'</b>'+l.min+(nx?"–"+(nx.min-1):"–100")+'%</div>'}).join("")+'</div>'+
+   '<p class="src" style="margin-top:10px">Escala criada para este kit a partir dos conteúdos da Aula 1. Use como bússola, não como nota.</p></div>'+
+   '<div style="display:flex;flex-direction:column;gap:14px"><div class="bars">'+rows.map(function(x){var c=x.r.n?(x.r.pct<40?"var(--bad)":x.r.pct<70?"var(--warn)":"var(--good)"):"var(--line)"; return '<div class="bar"><span>'+x.p.t+'</span><div class="track"><div class="fill" style="width:'+x.r.pct+'%;background:'+c+'"></div></div><span class="v">'+(x.r.n?x.r.pct+"%":"–")+'</span></div>'}).join("")+'</div>'+
+   (weak.length?'<div class="focus"><b>Dê atenção especial a</b><ol>'+weak.map(function(x){return '<li>'+x.p.t+' ('+x.r.pct+'%): <button type="button" data-go="'+x.p.step+'">passo '+x.p.step+' · '+STEPS[x.p.step].t+'</button></li>'}).join("")+'</ol></div>':'')+
+   '</div></div>'+
+   ai("Receba um plano de 30 dias",'<p>O prompt abaixo já leva as suas 24 respostas. Cole no Claude, ChatGPT ou Gemini.</p>'+promptBox("diag",diagPrompt()))+
+   '</div>';
+};
+/* 2. OBJETIVO */
+R[2]=function(){
+  var o=curObj();
+  return head(2,"Escolha o objetivo nº 1","Todo GTM começa pelo objetivo do momento. Sem ele, cada área puxa para um lado.",["Escolha <b>um</b> objetivo, o mais importante agora.","Marque as alavancas que vocês vão usar.","Escreva a meta e o prazo."])+
+  '<div class="s-body"><div class="pick c4">'+OBJ.map(function(x){return '<button type="button" class="opt" data-obj="'+x.id+'" aria-pressed="'+(S.obj===x.id)+'"><span class="n">'+x.n+'</span><span class="t">'+x.t+'</span></button>'}).join("")+'</div>'+
+  (o?'<div class="fld"><label>Como chegar lá <small>marque as alavancas da aula que fazem sentido</small></label><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">'+o.lev.map(function(l,i){var k=o.id+i; return '<label class="chk"><input type="checkbox" data-lev="'+k+'" '+(S.lev[k]?"checked":"")+'><span>'+esc(l)+'</span></label>'}).join("")+'</div></div>':'<p class="hint">Escolha um objetivo para ver as alavancas.</p>')+
+  fld("obj_meta","Meta e prazo","como vamos saber que chegamos lá?","Ex.: sair de R$ 300 mil para R$ 400 mil/mês até março",{input:1})+'</div>';
+};
+/* 3. ICP */
+R[3]=function(){
+  return head(3,"Descreva o seu ICP","ICP são os clientes com mais chance de pagar, reter e indicar, e para quem você resolve um problema doloroso. “Nail a niche”: domine um nicho antes de escalar.",["Pense nos seus melhores clientes de hoje.","Preencha os 5 critérios. O gatilho é o mais esquecido.","Sem dados à mão? Use o prompt de IA com a base do CRM."])+
+  '<div class="s-body"><div class="g2">'+ICPF.slice(0,4).map(function(x){return fld(x[0],x[1],x[2],x[3])}).join("")+'</div>'+
+  '<div class="box-accent">'+fld(ICPF[4][0],ICPF[4][1]+" · o critério mais esquecido",ICPF[4][2],ICPF[4][3])+'</div>'+
+  ai("Descubra o ICP com a base do CRM",'<p>1. Exporte os clientes dos últimos 2 anos (setor, porte, região, ticket, receita, status, origem do lead, datas do 1º contato e do fechamento, nº de contatos e custo por origem). 2. Tire nome, e-mail e telefone (LGPD). 3. Anexe a planilha e cole o prompt. Use os três na mesma conversa, em ordem.</p>'+promptTabs("icp",PR_ICP))+'</div>';
+};
+var PR_ICP=[{t:"1 · ICP x Anti-ICP",p:function(){return P_ICP},note:"Prompt 1 da aula, igual ao slide."},{t:"2 · Critérios para o CRM",p:function(){return P_ICP2},note:"Prompt 2 da aula, detalhado pelo kit."},{t:"3 · Classificar leads",p:function(){return P_ICP3},note:"Prompt 3 da aula, detalhado pelo kit."}];
+/* 4. ANTI-ICP */
+R[4]=function(){
+  return head(4,"Diga quem você precisa evitar","Tão importante quanto saber para quem vender é saber para quem não vender. O Anti-ICP cancela rápido, custa caro para conquistar e atender, e nunca expande.",["Lembre dos clientes que cancelaram rápido ou deram muito trabalho.","Escreva o que eles têm em comum."])+
+  '<div class="s-body"><div class="box-bad">'+fld("anti","Anti-ICP","churn rápido, alto custo, suporte alto, nunca expande","Ex.: empresas com 1 vendedor só e sem gestor comercial: cancelam antes do 4º mês",{rows:5})+'</div>'+
+  '<p class="hint">O Prompt 1 do passo anterior também devolve o Anti-ICP a partir da sua base.</p>'+
+  ai("Encontre o Anti-ICP na base",'<p>Rode o Prompt 1 (passo 3) com a base do CRM. Ele separa os 20% que cancelaram mais rápido e compara com os melhores clientes.</p>'+promptBox("anti",P_ICP))+'</div>';
+};
+/* 5. JORNADA */
+R[5]=function(){
+  jorInit();
+  var last=S.jor.length-1;
+  var tabs='<div class="tabs" role="tablist" id="jor-tabs">'+S.jor.map(function(st,i){var n=jFill(st.id); return '<button type="button" class="tab" role="tab" data-j="'+st.id+'" aria-selected="'+(S.jst===st.id)+'"><span class="dot '+(n===6?"full":n?"half":"")+'"></span><span class="jt">'+(i+1)+'. '+esc(st.t||"Etapa sem nome")+'</span></button>'}).join("")+'<button type="button" class="tab add" id="jor-add">+ Adicionar etapa</button></div>';
+  var st=S.jor[jIdx(S.jst)], i=jIdx(S.jst), def=/^[0-5]$/.test(st.id)?+st.id:-1;
+  var panel='<div class="jor-head"><div class="fld"><label for="jn">Etapa '+(i+1)+' · nome</label><input type="text" id="jn" data-jn="'+st.id+'" value="'+esc(st.t)+'" placeholder="Ex.: Aprovação do jurídico"></div>'+
+    '<div class="acts"><button type="button" class="btn small" data-jm="-1" '+(i===0?"disabled":"")+'>← Antes</button><button type="button" class="btn small" data-jm="1" '+(i===last?"disabled":"")+'>Depois →</button><button type="button" class="btn small danger" id="jor-del" '+(S.jor.length<2?"disabled":"")+'>Excluir etapa</button></div></div>'+
+    '<div class="g3">'+JQ.map(function(q){var k="j"+st.id+"_"+q.k, ex=(def>-1&&q.ex[def])?"Ex. da aula: "+q.ex[def]:"Escreva aqui"; return fld(k,q.t,q.h,ex)}).join("")+'</div>';
+  return head(5,"Mapeie a jornada de compra","O comprador B2B já fez boa parte da jornada sozinho quando fala com você. Saber como ele decide mostra onde o vendedor ajuda e onde você perde o cliente.",["Comece pelas 6 etapas sugeridas na aula. Renomeie, reordene, exclua ou adicione até ficar igual ao processo do seu cliente.","Para cada etapa, responda as 6 perguntas.","Valide depois com 6 a 8 clientes recentes, ganhos e perdidos."])+
+  '<div class="s-body">'+tabs+panel+
+  '<div class="jor-foot"><button type="button" class="btn ghost small" id="jor-reset">Voltar para as 6 etapas sugeridas</button><span class="hint">'+S.jor.length+(S.jor.length===1?" etapa":" etapas")+' · etapas sugeridas adaptadas de Gartner</span></div>'+
+  ai("Monte a jornada a partir de calls e entrevistas",promptBox("jor",jorPrompt(),"Prompt do kit, com as 6 perguntas por etapa do slide 19. Já usa as etapas que você definiu."))+'</div>';
+};
+/* 6. MOTOR */
+R[6]=function(){
+  return head(6,"Escolha o motor de crescimento","Não existe motor certo no vácuo: ele precisa combinar com o seu ticket e com a complexidade da venda. Quem mais cresce combina motores.",["Marque <b>um</b> motor como principal.","Marque os de apoio, se houver.","Explique por que essa combinação."])+
+  '<div class="s-body"><div class="motors">'+MOT.map(function(m){var s=S.mot[m.id]||0; return '<div class="motor" data-s="'+s+'"><span class="t">'+m.t+'</span><span class="d">'+m.d+'</span><span class="d"><b>Para:</b> '+m.r+'</span><div class="sel"><label for="mot-'+m.id+'" style="position:absolute;left:-9999px">Uso do motor '+m.t+'</label><select id="mot-'+m.id+'" data-mot="'+m.id+'">'+[["0","Não usamos"],["1","Principal"],["2","Apoio"]].map(function(o){return '<option value="'+o[0]+'" '+(String(s)===o[0]?"selected":"")+'>'+o[1]+'</option>'}).join("")+'</select></div></div>'}).join("")+'</div>'+
+  fld("motor_why","Por que essa combinação?","ticket, complexidade, quem decide","Ex.: ticket médio de R$ 5 mil e 3 pessoas na decisão, então sales-led puxa e marketing-led alimenta o topo")+
+  ai("Valide o seu motor",promptBox("mot",motPrompt(),"Prompt do kit. Já puxa o objetivo, o ICP e os motores que você marcou."))+'</div>';
+};
+/* 7. CANAIS */
+R[7]=function(){
+  var st=curStage(), sug=st?st.sug:[], showAll=S.allch||!st;
+  var list=CH.filter(function(c){return showAll||sug.indexOf(c.id)>-1||chS(c.id)});
+  return head(7,"Escolha onde apostar","Regra da aula: o CAC do canal precisa caber no LTV do cliente. Primeiro veja o seu momento, depois passe os canais pelo Bullseye do livro <i>Traction</i>.",["Escolha o momento da empresa.","Para cada canal, escreva uma ideia de ação e marque: <b>Possível</b>, <b>Provável</b> (2 ou 3 para testar) ou <b>Funciona</b> (o vencedor)."])+
+  '<div class="s-body"><div class="label">Em que momento a empresa está?</div><div class="pick c4">'+STAGES.map(function(s){return '<button type="button" class="opt" data-st="'+s.id+'" aria-pressed="'+(S.stage===s.id)+'"><span class="n">'+s.n+'</span><span class="t">'+s.t+'</span><span class="m">'+s.m+'</span></button>'}).join("")+'</div>'+
+  (st?'<div class="mix"><b>Mix que costuma fazer sentido:</b> '+st.mix+'.</div>':'')+
+  '<div class="ring-steps"><div><b>Possível</b>Uma ideia de ação para o canal. Nenhum fica de fora.</div><div><b>Provável</b>Os 2 ou 3 mais promissores. Teste rápido e barato.</div><div><b>Funciona</b>O canal vencedor. Foco total nele.</div></div>'+
+  '<div class="bull"><div><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px"><span class="label">'+(showAll?"Os 19 canais do Traction":"Canais que combinam com o seu momento")+'</span>'+(st?'<button type="button" class="btn small ghost" id="ch-all">'+(S.allch?"Mostrar só os sugeridos":"Ver os 19 canais")+'</button>':'')+'</div>'+
+  list.map(function(c){var r=chS(c.id), idea=chIdea(c.id); return '<div class="ch"><div class="nm">'+c.t+'<small>'+CHG[c.g]+(c.note?" · "+c.note:"")+'</small></div><div class="ring-seg" role="group" aria-label="Anel do '+esc(c.t)+'">'+RINGS.map(function(x){return '<button type="button" data-c="'+c.id+'" data-r="'+x.r+'" aria-pressed="'+(r===x.r)+'">'+x.t+'</button>'}).join("")+'</div><input type="text" id="ch-'+c.id+'" data-ci="'+c.id+'" value="'+esc(idea)+'" placeholder="Ideia de ação neste canal"></div>'}).join("")+
+  '<p class="src" style="margin-top:10px">Os 19 canais são do livro <i>Traction</i> (Weinberg e Mares, 2015); 14 aparecem na aula. Os canais sugeridos por momento são uma leitura do kit a partir do mix da aula, não uma regra do livro.</p></div>'+
+  '<div class="target"><svg id="target" viewBox="0 0 300 300" role="img" aria-label="Alvo do Bullseye"></svg><div class="rings-list" id="rings-list"></div></div></div>'+
+  '</div>';
+};
+/* 8. TESTE */
+R[8]=function(){
+  var best=-1,bi=-1; S.ice.forEach(function(r,i){var v=iceOf(r); if(v>best){best=v;bi=i}});
+  var exOnly=S.ice.length&&S.ice.every(function(r){return r.ex});
+  return head(8,"Escolha o primeiro teste","Com várias ideias na mesa, o ICE Score decide a ordem: nota de 1 a 10 para Impacto, Confiança e Facilidade. A média define o que testar primeiro.",["Traga as ideias dos canais “Provável”.","Dê as três notas para cada ideia.","Defina o teste: canal, meta e prazo. Depois, reavalie."])+
+  '<div class="s-body">'+(exOnly?'<div class="mix">As linhas abaixo são o <b>exemplo da aula</b>. Troque pelas suas ideias ou use o botão para puxar os canais que você marcou como Provável.</div>':'')+
+  '<div class="ice-wrap"><table class="ice"><thead><tr><th>Ideia de teste</th><th class="c">Impacto</th><th class="c">Confiança</th><th class="c">Facilidade</th><th class="c">ICE</th><th></th></tr></thead><tbody id="ice-body">'+
+  S.ice.map(function(r,i){return '<tr class="'+(i===bi&&best>0?"first":"")+'"><td><input type="text" id="ice-n-'+i+'" data-ice="'+i+'" data-f="n" value="'+esc(r.n)+'" placeholder="Descreva o teste">'+(r.ex?'<span class="hint">exemplo da aula</span>':'')+'</td>'+["i","c","e"].map(function(f){return '<td class="c"><input type="number" min="1" max="10" id="ice-'+f+'-'+i+'" data-ice="'+i+'" data-f="'+f+'" value="'+(r[f]||"")+'" aria-label="Nota '+f.toUpperCase()+'"></td>'}).join("")+'<td class="c"><span class="sc" id="ice-s-'+i+'">'+fmt(iceOf(r))+'</span></td><td><button class="x" data-del="'+i+'" aria-label="Remover ideia">×</button></td></tr>'}).join("")+
+  '</tbody></table></div><div class="row-btns"><button class="btn primary small" id="ice-from-b">Puxar canais marcados como Provável</button><button class="btn small" id="ice-add">+ Adicionar ideia</button><button class="btn small ghost" id="ice-sort">Ordenar pelo ICE</button>'+(exOnly?'<button class="btn small ghost" id="ice-clear">Apagar exemplos</button>':'')+'</div>'+
+  '<div class="g2">'+fld("test","Teste que vamos rodar","canal, meta e prazo","Ex.: outbound para o setor de logística, 20 reuniões em 30 dias",{input:1})+fld("review","Quando vamos reavaliar os canais?","",'',{input:1,type:"date"})+'</div>'+
+  '<p class="hint">Reavaliar é um ciclo (Hacking Growth): objetivo, ideias, priorizar, testar, analisar. Bateu a meta? Escala. Não bateu? Volta para as ideias.</p>'+
+  ai("Critique o seu ICE e desenhe o teste",promptBox("can",canaisPrompt(),"O prompt já leva o seu momento, o Bullseye e as notas de ICE."))+'</div>';
+};
+/* 9. METAS */
+R[9]=function(){
+  return head(9,"Alinhe metas e critérios","A meta de receita é uma só. Vendas e Marketing precisam falar a mesma língua, ter os mesmos critérios e saber qual é a sua parte da meta.",["Preencha os 4 números e veja a meta de cada área.","Escreva o que é MQL e o que é SQL na sua empresa.","Combine o SLA entre as áreas."])+
+  '<div class="s-body"><div class="label">Meta desdobrada</div><div class="g4">'+
+  fld("m_rec","Meta de receita/mês (R$)","","300000",{input:1,type:"number",attrs:' min="0" step="1000"'})+fld("m_pct","% vinda do Marketing","","50",{input:1,type:"number",attrs:' min="0" max="100"'})+fld("m_tkt","Ticket médio (R$)","","5000",{input:1,type:"number",attrs:' min="0"'})+fld("m_conv","Conversão lead → cliente (%)","","3",{input:1,type:"number",attrs:' min="0" max="100" step="0.1"'})+
+  '</div><div class="calc-out" id="calc-out"></div><p class="src" id="calc-note"></p>'+
+  '<div class="label" style="margin-top:6px">Critérios e SLA</div><div class="g2">'+fld("g_mql","MQL é…","quando o lead passa para Vendas","Ex.: é ICP e baixou um material")+fld("g_sql","SQL é…","quando Vendas aceita e vai abordar","Ex.: MQL que confirmou dor e prazo na conversa")+'</div>'+
+  '<div class="g2">'+fld("sla","SLA entre as áreas","o que cada uma entrega e em quanto tempo","Ex.: Marketing entrega a meta de MQLs do mês. Vendas faz o 1º contato em até 1 dia útil.")+fld("kpi","Métricas que vamos olhar toda semana","","Ex.: MQL do ICP, taxa MQL → SQL, CAC por canal, conversão lead → cliente")+'</div>'+
+  '<details class="more" data-key="gloss"'+(OPEN.gloss?' open':'')+'><summary>Glossário da aula</summary><div class="gloss">'+GLOSS.map(function(g){return '<b>'+g[0]+'</b><span>'+g[1]+'</span>'}).join("")+'</div><p class="hint" style="margin-top:8px">Escreva as definições num documento aprovado pelas duas áreas e configure o CRM com elas.</p></details>'+
+  ai("Revise MQL, SQL e SLA",promptBox("ali",aliPrompt(),"Prompt do kit. Já leva o que você escreveu acima."))+'</div>';
+};
+/* 10. RESUMO */
+R[10]=function(){
+  var steps=STEPS.map(function(_,i){return i}).filter(function(i){return i>0&&i<LAST&&state(i)<2});
+  return head(10,"Seu GTM em 1 página","Tudo o que você construiu, numa página para imprimir e levar para a reunião com o time.",null)+
+  '<div class="s-body">'+(steps.length?'<div class="mix">Ainda faltam completar: '+steps.map(function(i){return '<button type="button" class="btn small ghost" data-go="'+i+'" style="margin:2px">'+i+' · '+STEPS[i].t+'</button>'}).join("")+'</div>':'<div class="mix" style="border-color:var(--good)">Todos os passos completos. Agora é levar para o time.</div>')+
+  '<div class="done-bar"><button class="btn primary" data-act="print">Imprimir ou salvar PDF</button><button class="btn" data-act="md">Baixar meu GTM (.md)</button><button class="btn ghost" data-act="print-blank">Template em branco</button></div>'+
+  '<div id="sheet-view">'+sheet(false)+'</div>'+
+  '<h3 class="sec-t">Transforme em um agente de IA</h3>'+
+  '<div class="levels-ai"><div class="lv"><span class="n">Nível 1</span><h3>Prompts prontos</h3><p>Você usou ao longo dos passos. Precisa recontar o contexto a cada conversa.</p></div><div class="lv rec"><span class="n">Nível 2 · recomendado</span><h3>Agente de GTM</h3><p>Um assistente fixo com as suas instruções e o seu GTM anexado. Vira o guardião do GTM da empresa.</p></div><div class="lv"><span class="n">Nível 3</span><h3>Agente + CRM via MCP</h3><p>O agente lê o CRM direto, sem exportar planilha. Para quem tem apoio de TI ou RevOps.</p></div></div>'+
+  '<div class="card" style="padding:18px"><div class="label">Monte o agente em 4 passos</div><div class="tabs" role="tablist" style="margin:12px 0">'+TOOLS.map(function(t,i){return '<button type="button" class="tab" role="tab" data-tool="'+i+'" aria-selected="'+(S.tool===i)+'">'+t.t+'</button>'}).join("")+'</div><ol class="steps-list">'+TOOLS[S.tool].s.map(function(s){return '<li><span>'+s+'</span></li>'}).join("")+'</ol><p class="src" style="margin-top:10px">Os nomes dos menus podem mudar e a disponibilidade varia por plano.</p></div>'+
+  '<div><div class="label" style="margin-bottom:8px">Instruções do agente</div>'+promptBox("agent",AGENT.replace("{empresa}",empresa()),F("empresa")?"":"Dica: preencha o nome da empresa no passo 0 e ele entra aqui automaticamente.")+'</div>'+
+  '<div><div class="label" style="margin-bottom:8px">Comandos para o dia a dia · toque para copiar</div><div class="chips">'+CMDS.map(function(c,i){return '<button type="button" class="chip" data-cmd="'+i+'">'+esc(c)+'</button>'}).join("")+'</div></div>'+
+  '<details class="more" data-key="mcp"'+(OPEN.mcp?' open':'')+'><summary>Nível 3: conectar o agente ao CRM (MCP)</summary><div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">'+
+  '<p style="font-size:14px">MCP (Model Context Protocol) é um padrão aberto que funciona como uma tomada universal entre a IA e as suas ferramentas. Em vez de exportar a base para uma planilha, o agente consulta o CRM direto. Estes CRMs têm servidor MCP oficial:</p>'+
+  '<div class="crm"><a href="https://developers.hubspot.com/changelog/remote-hubspot-mcp-server-is-now-generally-available" target="_blank" rel="noopener"><b>HubSpot</b><span>Servidor MCP remoto oficial</span></a><a href="https://www.pipedrive.com/en/features/mcp-server" target="_blank" rel="noopener"><b>Pipedrive</b><span>Servidor MCP nativo</span></a><a href="https://github.com/forcedotcom/mcp-hosted" target="_blank" rel="noopener"><b>Salesforce</b><span>Servidores MCP hospedados</span></a></div>'+
+  '<p class="src">Levantamento de outubro de 2026. Se o seu CRM não aparece aqui, pergunte ao fornecedor. Evite servidores de terceiros sem revisão de TI.</p>'+
+  '<div class="care"><div><b>Comece só com leitura.</b> O agente consulta, mas não altera registros.</div><div><b>LGPD vale aqui também.</b> Peça análises agregadas, sem nome, e-mail e telefone.</div><div><b>Acesso com aprovação.</b> Quem administra o CRM aprova a conexão.</div><div><b>Confira os números.</b> Valide no CRM uma amostra do que a IA respondeu.</div></div></div></details>'+
+  '<h3 class="sec-t">Seis ações para os próximos 30 dias</h3><div class="next-act">'+["Esta semana","Nos próximos 30 dias"].map(function(g){return '<div><h4>'+g+'</h4>'+ACTS.map(function(a,i){return a.g!==g?"":'<label><input type="checkbox" data-a="'+i+'" '+(S.acts[i]?"checked":"")+'><span>'+esc(a.t)+'</span></label>'}).join("")+'</div>'}).join("")+'</div>'+
+  '<div class="aula6"><div><div class="t">Isso continua na Aula 06</div><p>Novas tecnologias e IA aplicadas a vendas B2B, com Thiago Reis (Growth Machine), em 17/12.</p></div></div>'+
+  '<p class="sources"><b>Fontes dos conceitos (citadas na aula):</b> Ross, A. <i>Receita Previsível</i> e <i>Hipercrescimento</i> · Gartner, The B2B Buying Journey · Weinberg, G.; Mares, J. <i>Traction</i> (2015) · Ellis, S.; Brown, M. <i>Hacking Growth</i> · Lógica do Revenue Waterfall, Forrester · Fórmula de meta: HubSpot · Doerr, J. <i>Measure What Matters</i>. <b>MCP:</b> <a href="https://developers.hubspot.com/changelog/remote-hubspot-mcp-server-is-now-generally-available" target="_blank" rel="noopener">HubSpot</a> · <a href="https://www.pipedrive.com/en/features/mcp-server" target="_blank" rel="noopener">Pipedrive</a> · <a href="https://github.com/forcedotcom/mcp-hosted" target="_blank" rel="noopener">Salesforce</a></p>'+
+  '</div>';
+};
+
+/* ================= FOLHA GTM EM 1 PÁGINA ================= */
+function sheet(blank){
+  function V(x){x=(x==null?"":String(x)).trim(); return (blank||!x)?'<span class="empty">a definir</span>':esc(x)}
+  var o=curObj(), lv=o?o.lev.filter(function(_,i){return S.lev[o.id+i]}):[];
+  var prin=MOT.filter(function(m){return S.mot[m.id]===1}).map(function(m){return m.t}), apo=MOT.filter(function(m){return S.mot[m.id]===2}).map(function(m){return m.t});
+  var T=diagTotal(), st=curStage();
+  function ring(r){return CH.filter(function(c){return chS(c.id)===r}).map(function(c){var i=chIdea(c.id); return c.t+(i?": "+i:"")}).join("\n")}
+  var top=sortedIce().filter(function(r){return iceOf(r)&&!r.ex}).slice(0,3);
+  var m=metaCalc(), mOk=!m.ex;
+  var jor=blank?JDEF.map(function(t,i){return {id:String(i),t:t}}):S.jor;
+  return '<div class="sheet"><div class="sh-top"><div><div class="eyebrow">GTM em 1 página</div><h3>'+(blank||!F("empresa")?"Empresa: ____________________":esc(F("empresa")))+'</h3></div><div class="meta">'+(blank?"Data: ___/___/______":"Atualizado em "+new Date().toLocaleDateString("pt-BR"))+'<br>Kit GTM na prática · PipeLovers · Aula 1</div></div><div class="sh-grid">'+
+  '<div class="sh s4"><h4>Objetivo nº 1</h4><p><b>'+(blank?'<span class="empty">a definir</span>':o?o.t:'<span class="empty">a definir</span>')+'</b></p><dl class="kv" style="margin-top:6px"><dt>Alavancas</dt><dd>'+V(lv.join(", "))+'</dd><dt>Meta e prazo</dt><dd>'+V(F("obj_meta"))+'</dd></dl></div>'+
+  '<div class="sh s4"><h4>Motor</h4><dl class="kv"><dt>Principal</dt><dd>'+V(prin.join(", "))+'</dd><dt>Apoio</dt><dd>'+V(apo.join(", "))+'</dd><dt>Por quê</dt><dd>'+V(F("motor_why"))+'</dd></dl></div>'+
+  '<div class="sh s4"><h4>Maturidade <small>diagnóstico</small></h4>'+(blank||!T.ans?'<p><span class="empty">a definir</span></p>':'<p><span class="bignum">'+T.pct+'%</span> · '+(T.ans>=6?T.lvl.t:"incompleto")+'</p><div class="minibars" style="margin-top:6px">'+PILLARS.map(function(p){var r=pillarScore(p); return '<div><span>'+p.t+'</span><i><b style="width:'+r.pct+'%"></b></i><span>'+(r.n?r.pct+"%":"–")+'</span></div>'}).join("")+'</div>')+'</div>'+
+  '<div class="sh s8"><h4>ICP <small>para quem vender</small></h4><dl class="kv">'+ICPF.map(function(x){return '<dt>'+x[1]+'</dt><dd>'+V(F(x[0]))+'</dd>'}).join("")+'</dl></div>'+
+  '<div class="sh s4"><h4>Anti-ICP <small>quem evitar</small></h4><p>'+V(F("anti"))+'</p></div>'+
+  '<div class="sh s12"><h4>Jornada de compra</h4><div class="jt-wrap"><table class="jt"><thead><tr><th></th>'+jor.map(function(s,i){return '<th>'+(i+1)+'. '+esc(s.t||"Etapa")+'</th>'}).join("")+'</tr></thead><tbody>'+JQ.map(function(q){return '<tr><th>'+q.t+'</th>'+jor.map(function(s){return '<td>'+(blank?'':esc(F("j"+s.id+"_"+q.k)))+'</td>'}).join("")+'</tr>'}).join("")+'</tbody></table></div></div>'+
+  '<div class="sh s6"><h4>Canais <small>Bullseye</small></h4><dl class="kv"><dt>Momento</dt><dd>'+V(st?st.t+" → "+st.mix:"")+'</dd><dt>Funciona</dt><dd>'+V(ring(3))+'</dd><dt>Provável</dt><dd>'+V(ring(2))+'</dd><dt>Possível</dt><dd>'+V(CH.filter(function(c){return chS(c.id)===1}).map(function(c){return c.t}).join(", "))+'</dd></dl></div>'+
+  '<div class="sh s6"><h4>Próximo teste <small>ICE</small></h4>'+(blank||!top.length?'<p><span class="empty">a definir</span></p>':'<ul>'+top.map(function(r){return '<li>'+esc(r.n)+' · ICE '+fmt(iceOf(r))+'</li>'}).join("")+'</ul>')+'<dl class="kv" style="margin-top:6px"><dt>Teste</dt><dd>'+V(F("test"))+'</dd><dt>Reavaliar em</dt><dd>'+V(F("review")?new Date(F("review")+"T12:00:00").toLocaleDateString("pt-BR"):"")+'</dd></dl></div>'+
+  '<div class="sh s6"><h4>Meta desdobrada</h4>'+(blank||!mOk?'<dl class="kv"><dt>Receita/mês</dt><dd><span class="empty">a definir</span></dd><dt>Marketing</dt><dd><span class="empty">a definir</span></dd><dt>Vendas</dt><dd><span class="empty">a definir</span></dd></dl>':'<dl class="kv"><dt>Receita/mês</dt><dd>'+brl(m.rec)+' · ticket '+brl(m.tkt)+'</dd><dt>Marketing</dt><dd><b>'+Math.ceil(m.leads).toLocaleString("pt-BR")+' leads do ICP/mês</b> ('+m.pct.toLocaleString("pt-BR")+'% da receita, conversão '+m.conv.toLocaleString("pt-BR")+'%)</dd><dt>Vendas</dt><dd><b>'+r1(m.tot)+' clientes/mês</b>, '+r1(m.tot-m.cm)+' de prospecção própria</dd></dl>')+'</div>'+
+  '<div class="sh s6"><h4>Alinhamento</h4><dl class="kv"><dt>MQL</dt><dd>'+V(F("g_mql"))+'</dd><dt>SQL</dt><dd>'+V(F("g_sql"))+'</dd><dt>SLA</dt><dd>'+V(F("sla"))+'</dd><dt>Métricas</dt><dd>'+V(F("kpi"))+'</dd></dl></div>'+
+  '</div></div>';
+}
+
+/* ================= PROMPTS DINÂMICOS ================= */
+function diagPrompt(){
+  var L="Você é especialista em go-to-market e Revenue Operations B2B. Fiz um diagnóstico de maturidade do GTM da minha empresa (Sim = 2, Em parte = 1, Não = 0). Respostas:\n";
+  PILLARS.forEach(function(p){var r=pillarScore(p); L+="\n"+p.t.toUpperCase()+" ("+(r.n?r.s+"/8":"sem resposta")+")\n"; p.qs.forEach(function(q,i){var v=S.diag[p.id+i]; L+="- "+q+" → "+(v===2?"Sim":v===1?"Em parte":v===0?"Não":"não respondi")+"\n"})});
+  return L+"\nCom base nisso:\n1. Aponte os 3 pontos mais frágeis e por que eles travam o crescimento.\n2. Monte um plano de 30 dias, semana a semana, com responsável (Vendas, Marketing ou CS) para cada ação.\n3. Diga quais dados eu preciso levantar no CRM para começar.\nSeja prático. Se faltar contexto sobre a empresa, pergunte antes.";
+}
+function jorPrompt(){var et=S.jor.map(function(s){return (s.t||"etapa sem nome").toLowerCase()}); var e=et.length>1?et.slice(0,-1).join(", ")+" e "+et[et.length-1]:et.join(""); return P_JOR.replace("{etapas}",e)}
+function motPrompt(){var o=curObj(); var mot=MOT.filter(function(m){return S.mot[m.id]}).map(function(m){return m.t+" ("+MOT_ST[S.mot[m.id]].toLowerCase()+")"}).join(", "); var icp=["icp_firmo","icp_comp","icp_dor"].map(F).filter(Boolean).join("; ");
+  return P_MOT.replace("{obj}",o?o.t:"[preencha]").replace("{icp}",icp||"[preencha]").replace("{tkt}",num("m_tkt")?brl(num("m_tkt")):"[preencha]").replace("{mot}",mot||"[preencha]")}
+function aliPrompt(){return P_ALI.replace("{mql}",F("g_mql")||"[preencha]").replace("{sql}",F("g_sql")||"[preencha]").replace("{sla}",F("sla")||"[preencha]")}
+function canaisPrompt(){
+  var st=curStage();
+  var L="Você é especialista em aquisição B2B e conhece o método Bullseye do livro Traction.\n\nMomento da empresa: "+(st?st.t+" (mix sugerido: "+st.mix+")":"[preencha]")+"\nICP: "+(["icp_firmo","icp_dor","icp_gat"].map(F).filter(Boolean).join("; ")||"[preencha]")+"\n\nMeu Bullseye hoje:\n";
+  RINGS.slice().reverse().forEach(function(x){var l=CH.filter(function(c){return chS(c.id)===x.r}).map(function(c){var i=chIdea(c.id); return c.t+(i?" ("+i+")":"")}); L+="- "+x.t+": "+(l.join("; ")||"nenhum")+"\n"});
+  L+="\nMinhas ideias com ICE (Impacto, Confiança, Facilidade):\n"+sortedIce().map(function(r){return "- "+(r.n||"sem nome")+(r.ex?" [exemplo da aula]":"")+": I "+(r.i||"?")+", C "+(r.c||"?")+", E "+(r.e||"?")+" → ICE "+fmt(iceOf(r))}).join("\n");
+  return L+"\n\n1. Sugira uma ideia de ação para cada um dos 19 canais do Traction pensando no meu ICP.\n2. Critique as minhas notas de ICE: onde estou otimista ou pessimista demais?\n3. Desenhe o teste de 30 dias da ideia que ficou em primeiro: meta, métrica, orçamento estimado e critério para escalar ou cortar.";
+}
+function refreshPrompt(id,text){var el=$("#pt-"+id); if(el) el.textContent=text}
+
+/* ================= RENDER ================= */
+function bindFields(root){$$("[data-k]",root).forEach(function(el){var k=el.dataset.k; el.value=S.f[k]!=null?S.f[k]:""})}
+function renderTrail(){
+  var g="", h="";
+  STEPS.forEach(function(s,i){
+    if(s.g!==g){g=s.g; h+='<li class="group">'+g+'</li>'}
+    var st=state(i);
+    h+='<li><button type="button" data-go="'+i+'" '+(i===S.step?'aria-current="step"':'')+'><span class="num">'+(i===LAST?"★":i)+'</span><span>'+s.t+'</span><span class="st s'+st+'" aria-label="'+(st===2?"completo":st===1?"começado":"")+'"></span></button></li>';
+  });
+  $("#trail-list").innerHTML=h;
+  $("#trail-now").innerHTML='<b>Passo '+S.step+' de '+LAST+'</b> · '+STEPS[S.step].t;
+  $("#topbar").style.width=Math.round(S.step/LAST*100)+"%";
+}
+function nav(){
+  var i=S.step, back="", next="";
+  if(i===1&&S.dpg>0) back='<button class="btn ghost" data-nav="-1">← '+(S.dpg===6?"Voltar às perguntas":"Bloco anterior")+'</button>';
+  else if(i>0) back='<button class="btn ghost" data-nav="-1">← Voltar</button>';
+  else back='<span></span>';
+  if(i===1&&S.dpg<5) next='<button class="btn primary" data-nav="1">Próximo bloco: '+PILLARS[S.dpg+1].t+' →</button>';
+  else if(i===1&&S.dpg===5) next='<button class="btn primary" data-nav="1">Ver resultado →</button>';
+  else if(i===0) next='<button class="btn primary big" data-nav="1">Começar →</button>';
+  else if(i<LAST) next='<button class="btn primary" data-nav="1">Próximo: '+STEPS[i+1].t+' →</button>';
+  else next='<button class="btn" data-go="0">Voltar ao início</button>';
+  return '<div class="s-nav">'+back+'<span class="saved">Salvo neste navegador</span>'+next+'</div>';
+}
+function render(focus){
+  var i=S.step;
+  $("#stage").innerHTML='<div class="card">'+R[i]()+nav()+'</div>';
+  bindFields($("#stage"));
+  if(i===7) drawTarget();
+  if(i===9) calc();
+  renderTrail();
+  if(focus){window.scrollTo(0,0); try{$("#stage").focus({preventScroll:true})}catch(e){}}
+}
+function go(i){
+  i=Math.max(0,Math.min(LAST,+i||0));
+  if(i===1&&S.step!==1&&Object.keys(S.diag).length>=24) S.dpg=6;
+  S.step=i; save();
+  $("#trail").classList.remove("open"); $("#trail-toggle").setAttribute("aria-expanded","false");
+  if(location.hash!=="#p"+i){try{history.pushState(null,"","#p"+i)}catch(e){}}
+  render(true);
+}
+window.addEventListener("popstate",function(){var m=/^#p(\d+)$/.exec(location.hash); if(m){S.step=Math.min(LAST,+m[1]); save(); render(true);}});
+
+/* ================= INTERAÇÕES ================= */
+document.addEventListener("click",function(e){
+  var t=e.target, b;
+  if((b=t.closest("[data-go]"))){go(+b.dataset.go); return;}
+  if((b=t.closest("[data-nav]"))){var d=+b.dataset.nav;
+    if(S.step===1&&((d>0&&S.dpg<6)||(d<0&&S.dpg>0))){S.dpg+=d; save(); render(true); return;}
+    go(S.step+d); return;}
+  if((b=t.closest("[data-dpg]"))){S.dpg=+b.dataset.dpg; save(); render(); return;}
+  if((b=t.closest("button[data-q]"))){var q=b.dataset.q, v=+b.dataset.v; if(S.diag[q]===v) delete S.diag[q]; else S.diag[q]=v; save();
+    $$('button[data-q="'+q+'"]').forEach(function(x){x.setAttribute("aria-pressed",String(S.diag[q])===x.dataset.v)});
+    var p=PILLARS[S.dpg]; if(p){var pill=$('.pill[data-dpg="'+S.dpg+'"] .c'); if(pill) pill.textContent=pillarScore(p).n+"/4";} renderTrail(); return;}
+  if((b=t.closest("[data-obj]"))){S.obj=S.obj===b.dataset.obj?"":b.dataset.obj; save(); render(); return;}
+  if((b=t.closest("[data-st]"))){S.stage=S.stage===b.dataset.st?"":b.dataset.st; save(); render(); return;}
+  if(t.closest("#ch-all")){S.allch=S.allch?0:1; save(); render(); return;}
+  if((b=t.closest("button[data-c]"))){var id=b.dataset.c, r=+b.dataset.r; S.ch[id]=S.ch[id]||{}; S.ch[id].r=S.ch[id].r===r?0:r; save();
+    $$('button[data-c="'+id+'"]').forEach(function(x){x.setAttribute("aria-pressed",+x.dataset.r===S.ch[id].r)}); drawTarget(); renderTrail(); return;}
+  if((b=t.closest("[data-pset]"))){S.pt[b.dataset.pset]=+b.dataset.pi; save(); render(); return;}
+  if((b=t.closest("[data-tool]"))){S.tool=+b.dataset.tool; save(); render(); return;}
+  if((b=t.closest("[data-cmd]"))){copy(CMDS[+b.dataset.cmd]); return;}
+  if((b=t.closest("[data-copy-el]"))){var el=document.getElementById(b.dataset.copyEl); if(el) copy(el.textContent,b); return;}
+  /* jornada */
+  if((b=t.closest("[data-j]"))){S.jst=b.dataset.j; save(); render(); return;}
+  if(t.closest("#jor-add")){var nid="n"+Date.now().toString(36); S.jor.push({id:nid,t:"Nova etapa"}); S.jst=nid; save(); render(); var jn=$("#jn"); if(jn){jn.focus(); jn.select()} toast("Etapa adicionada. Dê um nome a ela."); return;}
+  if((b=t.closest("[data-jm]"))&&!b.disabled){var a=jIdx(S.jst), z=a+(+b.dataset.jm); if(z<0||z>=S.jor.length) return; var tmp=S.jor[a]; S.jor[a]=S.jor[z]; S.jor[z]=tmp; save(); render(); return;}
+  if((b=t.closest("#jor-del"))&&!b.disabled){
+    if(b.classList.contains("armed")){var di=jIdx(S.jst), did=S.jst; S.jor.splice(di,1); JQ.forEach(function(q){delete S.f["j"+did+"_"+q.k]}); S.jst=S.jor[Math.max(0,di-1)].id; save(); render(); toast("Etapa excluída."); }
+    else{b.classList.add("armed"); b.textContent="Toque de novo para excluir"; setTimeout(function(){if(b.isConnected){b.classList.remove("armed"); b.textContent="Excluir etapa"}},4000);} return;}
+  if((b=t.closest("#jor-reset"))){
+    if(b.classList.contains("armed")){S.jor.forEach(function(st){if(!/^[0-5]$/.test(st.id)) JQ.forEach(function(q){delete S.f["j"+st.id+"_"+q.k]})}); S.jor=null; S.jst="0"; jorInit(); save(); render(); toast("A jornada voltou para as 6 etapas sugeridas.");}
+    else{b.classList.add("armed"); b.textContent="Toque de novo: etapas novas serão apagadas"; setTimeout(function(){if(b.isConnected){b.classList.remove("armed"); b.textContent="Voltar para as 6 etapas sugeridas"}},4000);} return;}
+  /* ICE */
+  if((b=t.closest("[data-del]"))){S.ice.splice(+b.dataset.del,1); save(); render(); return;}
+  if(t.closest("#ice-add")){S.ice.push({n:"",i:"",c:"",e:""}); save(); render(); var ln=$("#ice-n-"+(S.ice.length-1)); if(ln) ln.focus(); return;}
+  if(t.closest("#ice-sort")){S.ice=sortedIce(); save(); render(); toast("Ideias ordenadas: a primeira é o próximo teste."); return;}
+  if(t.closest("#ice-clear")){S.ice=S.ice.filter(function(r){return !r.ex}); save(); render(); return;}
+  if(t.closest("#ice-from-b")){var have=S.ice.map(function(r){return r.n}), add=0;
+    CH.forEach(function(c){if(chS(c.id)===2){var nm=c.t+(chIdea(c.id)?": "+chIdea(c.id):""); if(have.indexOf(nm)<0){S.ice.push({n:nm,i:"",c:"",e:""}); add++}}});
+    if(add) S.ice=S.ice.filter(function(r){return !r.ex}); save(); render(); toast(add?add+" ideia(s) adicionada(s). Agora dê as notas.":"Marque canais como Provável no passo 7 primeiro."); return;}
+});
+document.addEventListener("input",function(e){
+  var el=e.target, d=el.dataset||{};
+  if(d.k){S.f[d.k]=el.value; save(); renderTrail();
+    if(/^m_/.test(d.k)) calc();
+    if(/^j/.test(d.k)){var tb=$('#jor-tabs [data-j="'+S.jst+'"] .dot'); var n=jFill(S.jst); if(tb) tb.className="dot "+(n===6?"full":n?"half":"");}
+    if(S.step===6) refreshPrompt("mot",motPrompt());
+    if(S.step===9) refreshPrompt("ali",aliPrompt());
+    return;}
+  if(d.jn){var st=S.jor[jIdx(d.jn)]; st.t=el.value; var tab=$('#jor-tabs [data-j="'+d.jn+'"] .jt'); if(tab) tab.textContent=(jIdx(d.jn)+1)+". "+(st.t||"Etapa sem nome"); save(); refreshPrompt("jor",jorPrompt()); return;}
+  if(d.ci){S.ch[d.ci]=S.ch[d.ci]||{}; S.ch[d.ci].idea=el.value; save(); return;}
+  if(d.ice!=null){var i=+d.ice, f=d.f, v=el.value;
+    if(f!=="n") v=v===""?"":Math.max(1,Math.min(10,Math.round(+v)||1));
+    S.ice[i][f]=v; if(S.ice[i].ex){delete S.ice[i].ex; var tag=el.closest("td").parentNode.querySelector(".hint"); if(tag) tag.remove();}
+    $("#ice-s-"+i).textContent=fmt(iceOf(S.ice[i])); save(); markFirst(); refreshPrompt("can",canaisPrompt()); renderTrail(); return;}
+});
+document.addEventListener("change",function(e){
+  var el=e.target, d=el.dataset||{};
+  if(d.ice!=null&&d.f!=="n"){el.value=S.ice[+d.ice][d.f]; return;}
+  if(d.lev){if(el.checked) S.lev[d.lev]=1; else delete S.lev[d.lev]; save(); return;}
+  if(d.a!=null){if(el.checked) S.acts[d.a]=1; else delete S.acts[d.a]; save(); return;}
+  if(d.mot){var s=+el.value, moved="";
+    if(s===1){for(var k in S.mot){if(S.mot[k]===1&&k!==d.mot){S.mot[k]=2; moved=MOT.filter(function(m){return m.id===k})[0].t}}}
+    if(s) S.mot[d.mot]=s; else delete S.mot[d.mot]; save(); render();
+    if(moved) toast(moved+" passou para apoio. Só um motor pode ser o principal."); return;}
+});
+function markFirst(){var best=-1,bi=-1; S.ice.forEach(function(r,i){var v=iceOf(r); if(v>best){best=v;bi=i}}); $$("#ice-body tr").forEach(function(tr,i){tr.classList.toggle("first",i===bi&&best>0)})}
+function calc(){
+  var m=metaCalc(), out=$("#calc-out"); if(!out) return;
+  out.innerHTML='<div><div class="lab">Meta do Marketing</div><div class="big">'+Math.ceil(m.leads).toLocaleString("pt-BR")+' leads</div><div class="lab">do ICP por mês: '+brl(m.mk)+' ÷ '+brl(m.tkt)+' = '+r1(m.cm)+' clientes ÷ '+m.conv.toLocaleString("pt-BR")+'%</div></div>'+
+   '<div><div class="lab">Meta de Vendas</div><div class="big">'+r1(m.tot)+' clientes</div><div class="lab">por mês ('+brl(m.rec)+'), sendo '+r1(m.tot-m.cm)+' de prospecção própria</div></div>';
+  $("#calc-note").textContent=m.ex?"Mostrando o exemplo da aula (números fictícios). Preencha os 4 campos para calcular a sua meta. Fórmula: HubSpot.":"A conversão de lead em cliente depende das duas áreas, então essa meta é compartilhada. Fórmula: HubSpot.";
+}
+function drawTarget(){
+  var svgEl=$("#target"); if(!svgEl) return;
+  var by={1:[],2:[],3:[]}; CH.forEach(function(c){var r=chS(c.id); if(r) by[r].push(c)});
+  var svg='<circle cx="150" cy="150" r="140" fill="var(--ring-1)"/><circle cx="150" cy="150" r="94" fill="var(--ring-2)"/><circle cx="150" cy="150" r="48" fill="var(--ring-3)"/>'+
+   '<text x="150" y="34" text-anchor="middle" fill="var(--ink)" style="font:600 11px var(--f-body);letter-spacing:.1em">POSSÍVEL · '+by[1].length+'</text>'+
+   '<text x="150" y="84" text-anchor="middle" fill="#FFFFFF" style="font:600 11px var(--f-body);letter-spacing:.1em">PROVÁVEL · '+by[2].length+'</text>'+
+   '<text x="150" y="146" text-anchor="middle" fill="var(--on-accent)" style="font:400 22px var(--f-display)">'+by[3].length+'</text>'+
+   '<text x="150" y="164" text-anchor="middle" fill="var(--on-accent)" style="font:600 10px var(--f-body);letter-spacing:.1em">FUNCIONA</text>';
+  function dots(list,rad,col){var n=list.length; return list.map(function(c,i){var a=(-60+300*(i+0.5)/Math.max(n,1))*Math.PI/180; return '<circle cx="'+(150+rad*Math.cos(a)).toFixed(1)+'" cy="'+(150+rad*Math.sin(a)).toFixed(1)+'" r="6" fill="'+col+'" stroke="var(--surface)" stroke-width="2"><title>'+esc(c.t)+'</title></circle>'}).join("")}
+  svgEl.innerHTML=svg+dots(by[1],117,"var(--accent)")+dots(by[2],71,"var(--surface)");
+  var w2=by[2].length>3?'<div class="warn">A aula sugere 2 ou 3 canais em Provável. Você tem '+by[2].length+'.</div>':"";
+  var w3=by[3].length>1?'<div class="warn">Foco total: tente deixar só 1 canal em Funciona.</div>':"";
+  $("#rings-list").innerHTML=[3,2,1].map(function(r){var sw=["","var(--ring-1)","var(--ring-2)","var(--ring-3)"][r]; return '<div><div class="h"><span class="sw" style="background:'+sw+'"></span>'+RINGS[r-1].t+' ('+by[r].length+')</div><div class="v">'+(by[r].map(function(c){return c.t}).join(", ")||"nenhum ainda")+'</div>'+(r===2?w2:r===3?w3:"")+'</div>'}).join("");
+}
+
+/* ================= COPIAR / EXPORTAR ================= */
+function copy(text,btn){
+  function ok(){toast("Copiado. Agora é só colar na IA."); if(btn){var o=btn.textContent; btn.textContent="Copiado"; setTimeout(function(){if(btn.isConnected) btn.textContent=o},1500)}}
+  function fallback(){var ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); var s=false; try{s=document.execCommand("copy")}catch(e){} document.body.removeChild(ta); if(s) ok(); else toast("Não consegui copiar. Selecione o texto e use Ctrl+C.");}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,fallback)} else fallback();
+}
+function dl(name,text,type){try{var blob=new Blob([text],{type:type}); var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href); a.remove()},500); toast("Arquivo gerado: "+name);}catch(e){toast("O download foi bloqueado neste ambiente.")}}
+function md(){
+  function v(x){x=(x||"").trim(); return x||"_a definir_"}
+  var o=curObj(), st=curStage(), m=metaCalc(), T=diagTotal();
+  var t="# GTM da "+empresa()+"\nGerado pelo Kit GTM na prática (PipeLovers, Aula 1) em "+new Date().toLocaleDateString("pt-BR")+".\n\n";
+  t+="## 1. Objetivo nº 1\n"+(o?o.t:"_a definir_")+"\n"; if(o){var lv=o.lev.filter(function(_,i){return S.lev[o.id+i]}); if(lv.length) t+="Alavancas: "+lv.join(", ")+"\n";}
+  t+="Meta e prazo: "+v(F("obj_meta"))+"\n\n## 2. ICP\n"+ICPF.map(function(x){return "- "+x[1]+": "+v(F(x[0]))}).join("\n")+"\n\n## 3. Anti-ICP\n"+v(F("anti"))+"\n\n## 4. Jornada de compra\n";
+  S.jor.forEach(function(s,i){t+="\n### "+(i+1)+". "+(s.t||"Etapa sem nome")+"\n"; JQ.forEach(function(q){t+="- "+q.t+" "+v(F("j"+s.id+"_"+q.k))+"\n"})});
+  t+="\n## 5. Motor de crescimento\n"+(MOT.filter(function(x){return S.mot[x.id]}).map(function(x){return "- "+x.t+": "+MOT_ST[S.mot[x.id]].toLowerCase()}).join("\n")||"_a definir_")+"\nPor quê: "+v(F("motor_why"))+"\n\n";
+  t+="## 6. Canais\nMomento: "+(st?st.t+" (mix: "+st.mix+")":"_a definir_")+"\n";
+  RINGS.slice().reverse().forEach(function(x){var l=CH.filter(function(c){return chS(c.id)===x.r}); t+="\n**"+x.t+"**\n"+(l.map(function(c){return "- "+c.t+(chIdea(c.id)?": "+chIdea(c.id):"")}).join("\n")||"- nenhum")+"\n"});
+  t+="\n## 7. Primeiro teste (ICE)\n| Ideia | I | C | E | ICE |\n|---|---|---|---|---|\n"+sortedIce().map(function(r){return "| "+(r.n||"")+(r.ex?" (exemplo da aula)":"")+" | "+(r.i||"")+" | "+(r.c||"")+" | "+(r.e||"")+" | "+fmt(iceOf(r))+" |"}).join("\n")+"\n\nTeste: "+v(F("test"))+"\nReavaliar em: "+v(F("review"))+"\n\n";
+  t+="## 8. Metas e alinhamento\n"+(m.ex?"Meta desdobrada: _a definir_\n":"Meta de receita: "+brl(m.rec)+"/mês\nMarketing: "+Math.ceil(m.leads).toLocaleString("pt-BR")+" leads do ICP/mês\nVendas: "+r1(m.tot)+" clientes/mês ("+r1(m.tot-m.cm)+" de prospecção própria)\n")+"\n- MQL: "+v(F("g_mql"))+"\n- SQL: "+v(F("g_sql"))+"\n- SLA: "+v(F("sla"))+"\n- Métricas semanais: "+v(F("kpi"))+"\n\n### Glossário da aula\n"+GLOSS.map(function(g){return "- **"+g[0]+"**: "+g[1]}).join("\n")+"\n\n";
+  t+="## Diagnóstico de maturidade\n"+(T.ans?T.pct+"% ("+(T.ans>=6?T.lvl.t:"incompleto")+")\n":"")+PILLARS.map(function(p){var r=pillarScore(p); return "- "+p.t+": "+(r.n?r.pct+"% ("+r.n+"/4 respondidas)":"não respondido")}).join("\n")+"\n";
+  return t;
+}
+function printSheet(blank){
+  var root=$("#print-root");
+  if(!root){root=document.createElement("div"); root.id="print-root"; root.className="print-only"; $("#stage").appendChild(root);}
+  root.innerHTML=sheet(blank); document.body.classList.toggle("blank",!!blank);
+  setTimeout(function(){window.print(); setTimeout(function(){document.body.classList.remove("blank"); root.remove();},400)},60);
+}
+window.addEventListener("beforeprint",function(){if(!$("#print-root")){var r=document.createElement("div"); r.id="print-root"; r.className="print-only"; r.innerHTML=sheet(false); $("#stage").appendChild(r);}});
+window.addEventListener("afterprint",function(){var r=$("#print-root"); if(r&&!document.body.classList.contains("blank")) r.remove();});
+
+var dlBtn=$("#dl-btn"), dlMenu=$("#dl-menu");
+dlBtn.addEventListener("click",function(e){e.stopPropagation(); dlMenu.hidden=!dlMenu.hidden; dlBtn.setAttribute("aria-expanded",!dlMenu.hidden)});
+document.addEventListener("click",function(e){if(!e.target.closest(".menu")){dlMenu.hidden=true; dlBtn.setAttribute("aria-expanded","false")}});
+var resetArm=0;
+document.addEventListener("click",function(e){var b=e.target.closest("[data-act]"); if(!b) return; var a=b.dataset.act;
+  if(a!=="reset") dlMenu.hidden=true;
+  if(a==="print") printSheet(false);
+  else if(a==="print-blank") printSheet(true);
+  else if(a==="md") dl("meu-gtm.md",md(),"text/markdown;charset=utf-8");
+  else if(a==="json") dl("kit-gtm-respostas.json",JSON.stringify(S,null,2),"application/json");
+  else if(a==="import") $("#import-file").click();
+  else if(a==="reset"){
+    if(Date.now()-resetArm<4000){try{localStorage.removeItem(KEY)}catch(x){} location.hash=""; location.reload();}
+    else{resetArm=Date.now(); b.innerHTML='Toque de novo para confirmar<small>Isso apaga todas as respostas deste navegador</small>';}
+  }
+});
+$("#import-file").addEventListener("change",function(e){var f=e.target.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){try{var o=JSON.parse(r.result); if(!o||typeof o!=="object"||!o.f) throw 0; for(var k in o) S[k]=o[k]; if(!Array.isArray(S.ice)) S.ice=[]; jorInit(); save(); render(true); toast("Respostas carregadas.")}catch(x){toast("Esse arquivo não é um backup do Kit GTM.")}}; r.readAsText(f); e.target.value="";});
+document.addEventListener("toggle",function(e){var d=e.target; if(d.dataset&&d.dataset.key) OPEN[d.dataset.key]=d.open;},true);
+$("#trail-toggle").addEventListener("click",function(){var tr=$("#trail"); tr.classList.toggle("open"); this.setAttribute("aria-expanded",tr.classList.contains("open"))});
+
+/* ================= INÍCIO ================= */
+var hm=/^#p(\d+)$/.exec(location.hash); if(hm) S.step=Math.min(LAST,+hm[1]);
+if(typeof S.step!=="number"||S.step<0||S.step>LAST) S.step=0;
+render(false);
+})();
+</script>
+</body>
+</html>
